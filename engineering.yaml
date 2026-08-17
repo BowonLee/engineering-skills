@@ -1,0 +1,14 @@
+version: 1
+
+registry:
+  type: local
+  path: .
+
+skills:
+  implementation-guidelines: 0.1.0
+  code-review: 0.1.0
+
+context:
+  architecture: ./docs/architecture
+  adr: ./docs/adr
+  design_system: ./docs/design-system

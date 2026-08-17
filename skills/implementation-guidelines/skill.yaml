@@ -1,0 +1,16 @@
+name: implementation-guidelines
+version: 0.1.0
+
+description: >
+  Shared implementation principles for applying project architecture,
+  dependency boundaries, reuse, error handling, and verification.
+
+tags:
+  - implementation
+  - architecture
+  - testing
+
+project_context:
+  recommended:
+    - architecture
+    - adr

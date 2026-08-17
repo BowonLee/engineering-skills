@@ -1,0 +1,17 @@
+name: code-review
+version: 0.1.0
+
+description: >
+  Review implementation changes for architecture, design-system,
+  testing, documentation, and unnecessary complexity risks.
+
+tags:
+  - review
+  - quality
+  - testing
+
+project_context:
+  recommended:
+    - architecture
+    - adr
+    - design_system
