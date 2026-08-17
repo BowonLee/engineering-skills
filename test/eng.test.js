@@ -229,3 +229,16 @@ test('CLI supports doctor', async () => {
   assert.match(result.stdout, /Engineering Skills Doctor/);
   assert.match(result.stdout, /0 warnings, 0 failed/);
 });
+
+test('usage documentation is included in the project', async () => {
+  const readme = await fs.readFile(path.join(root, 'README.md'), 'utf8');
+  const usage = await fs.readFile(path.join(root, 'docs', 'USAGE.md'), 'utf8');
+
+  assert.match(readme, /docs\/USAGE\.md/);
+  assert.match(usage, /eng init --discover/);
+  assert.match(usage, /eng sync/);
+  assert.match(usage, /eng prepare codex/);
+  assert.match(usage, /eng doctor/);
+  assert.match(usage, /Use From Another Project/);
+  assert.match(usage, /Codex Workflow/);
+});

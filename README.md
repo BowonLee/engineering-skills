@@ -4,6 +4,8 @@ Reusable engineering skill management for AI coding agents.
 
 This repository implements the v0.1 MVP described in `engineering-skills-architecture.md`: a manifest-driven resolver that syncs shared skills into a local cache and prepares an agent-readable context index for Codex.
 
+For practical setup and day-to-day usage, read [docs/USAGE.md](docs/USAGE.md).
+
 ## Current Scope
 
 Implemented:
@@ -68,7 +70,7 @@ context:
 
 ## Commands
 
-Sync declared skills into the shared cache:
+Inspect the current project without changing files:
 
 ```bash
 npm run eng -- init --discover
@@ -98,6 +100,7 @@ Use another project root:
 npm run eng -- --project /path/to/project init --discover
 npm run eng -- --project /path/to/project sync
 npm run eng -- --project /path/to/project prepare codex
+npm run eng -- --project /path/to/project doctor
 ```
 
 ## Generated Output
