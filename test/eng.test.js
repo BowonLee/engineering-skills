@@ -289,8 +289,10 @@ test('CLI supports doctor', async () => {
 test('usage documentation is included in the project', async () => {
   const readme = await fs.readFile(path.join(root, 'README.md'), 'utf8');
   const usage = await fs.readFile(path.join(root, 'docs', 'USAGE.md'), 'utf8');
+  const packageJson = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
 
   assert.match(readme, /docs\/USAGE\.md/);
+  assert.match(readme, /npm install -g @bowonlee\/engineering-skills/);
   assert.match(usage, /eng init --discover/);
   assert.match(usage, /eng sync/);
   assert.match(usage, /eng prepare codex/);
@@ -298,4 +300,7 @@ test('usage documentation is included in the project', async () => {
   assert.match(usage, /eng doctor/);
   assert.match(usage, /Use From Another Project/);
   assert.match(usage, /Codex Workflow/);
+  assert.equal(packageJson.name, '@bowonlee/engineering-skills');
+  assert.equal(packageJson.bin.eng, './src/cli.js');
+  assert.equal(packageJson.publishConfig.access, 'public');
 });

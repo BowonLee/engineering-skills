@@ -40,7 +40,29 @@ Generated files are intentionally ignored by Git.
 
 ## Use This Repository
 
-Install dependencies:
+Install as a global CLI package:
+
+```bash
+npm install -g @bowonlee/engineering-skills
+```
+
+Install directly from GitHub:
+
+```bash
+npm install -g git+ssh://git@github.com/BowonLee/engineering-skills.git
+```
+
+After a global install, use:
+
+```bash
+eng --help
+eng init --discover
+eng sync
+eng prepare codex
+eng doctor
+```
+
+For local development, install dependencies:
 
 ```bash
 npm install
@@ -86,6 +108,7 @@ Run tests:
 
 ```bash
 npm test
+npm run pack:check
 ```
 
 ## Use From Another Project

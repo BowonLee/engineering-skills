@@ -31,6 +31,22 @@ Deferred:
 
 ## Install
 
+Install as a global CLI package:
+
+```bash
+npm install -g @bowonlee/engineering-skills
+eng --help
+```
+
+Install directly from GitHub:
+
+```bash
+npm install -g git+ssh://git@github.com/BowonLee/engineering-skills.git
+eng --help
+```
+
+For local development:
+
 ```bash
 npm install
 ```
@@ -152,4 +168,5 @@ project_context:
 
 ```bash
 npm test
+npm run pack:check
 ```

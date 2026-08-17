@@ -1,14 +1,46 @@
 {
-  "name": "engineering-skills",
+  "name": "@bowonlee/engineering-skills",
   "version": "0.1.0",
   "description": "Reusable engineering skills resolver and agent context CLI.",
   "type": "module",
+  "license": "MIT",
+  "author": "Bowon Lee <asdfg3678@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/BowonLee/engineering-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BowonLee/engineering-skills/issues"
+  },
+  "homepage": "https://github.com/BowonLee/engineering-skills#readme",
+  "keywords": [
+    "codex",
+    "skills",
+    "engineering",
+    "agent",
+    "cli",
+    "context"
+  ],
   "bin": {
     "eng": "./src/cli.js"
   },
   "scripts": {
     "test": "node --test",
-    "eng": "node ./src/cli.js"
+    "eng": "node ./src/cli.js",
+    "prepublishOnly": "npm test && npm run pack:check",
+    "pack:check": "npm pack --dry-run"
+  },
+  "files": [
+    "README.md",
+    "docs/",
+    "schemas/",
+    "skills/",
+    "src/",
+    "engineering-skills-architecture.md",
+    "engineering.yaml"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {
     "yaml": "^2.8.1",
