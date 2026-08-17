@@ -14,13 +14,13 @@ Implemented:
 - Read-only repository discovery with `eng init --discover`
 - `eng sync`
 - `eng prepare codex`
+- `eng doctor`
 - Codex context index at `.engineering/generated/context.md`
 
 Deferred:
 
 - Git registry resolution
 - `eng init`
-- `eng doctor`
 - `engineering.lock`
 - Skill dependency resolution
 - Project extensions and initialization interviews
@@ -84,6 +84,12 @@ Prepare Codex context for the current project:
 
 ```bash
 npm run eng -- prepare codex
+```
+
+Check manifest, skill metadata, cache, generated context, and context paths:
+
+```bash
+npm run eng -- doctor
 ```
 
 Use another project root:

@@ -5,12 +5,14 @@ import { readManifest } from './manifest.js';
 import { syncSkills } from './cache.js';
 import { prepareCodex } from './prepare.js';
 import { discoverProject, formatDiscovery } from './discover.js';
+import { formatDoctor, runDoctor } from './doctor.js';
 
 function usage() {
   return `Usage:
   eng sync
   eng init --discover
   eng prepare codex
+  eng doctor
 
 Options:
   --project <path>  Project root (default: current directory)
@@ -51,6 +53,15 @@ async function main() {
   if (command === 'init' && target === '--discover') {
     const discovery = await discoverProject(projectRoot);
     console.log(formatDiscovery(discovery));
+    return;
+  }
+
+  if (command === 'doctor') {
+    const result = await runDoctor(projectRoot);
+    console.log(formatDoctor(result));
+    if (result.checks.some((check) => check.status === 'fail')) {
+      process.exitCode = 1;
+    }
     return;
   }
 
