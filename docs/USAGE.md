@@ -12,6 +12,7 @@ engineering.yaml
   -> ~/.engineering/cache
   -> eng prepare codex
   -> .engineering/generated/context.md
+  -> optional .codex/skills install
   -> Codex reads the generated context and relevant skills
 ```
 
@@ -63,6 +64,12 @@ Prepare Codex context:
 npm run eng -- prepare codex
 ```
 
+Install project-local Codex native skills:
+
+```bash
+npm run eng -- prepare codex --install-skills
+```
+
 Check the setup:
 
 ```bash
@@ -108,6 +115,7 @@ From this repository, run against the target project:
 npm run eng -- --project /path/to/project init --discover
 npm run eng -- --project /path/to/project sync
 npm run eng -- --project /path/to/project prepare codex
+npm run eng -- --project /path/to/project prepare codex --install-skills
 npm run eng -- --project /path/to/project doctor
 ```
 
@@ -117,6 +125,7 @@ Or run the CLI file directly from the target project:
 node /Users/ibowon/workspace/engineering-skills/src/cli.js init --discover
 node /Users/ibowon/workspace/engineering-skills/src/cli.js sync
 node /Users/ibowon/workspace/engineering-skills/src/cli.js prepare codex
+node /Users/ibowon/workspace/engineering-skills/src/cli.js prepare codex --install-skills
 node /Users/ibowon/workspace/engineering-skills/src/cli.js doctor
 ```
 
@@ -129,6 +138,12 @@ npm run eng -- --project /path/to/project sync
 npm run eng -- --project /path/to/project prepare codex
 ```
 
+If you want Codex to discover the skills as project-local native skills, run:
+
+```bash
+npm run eng -- --project /path/to/project prepare codex --install-skills
+```
+
 Then instruct Codex:
 
 ```text
@@ -139,6 +154,7 @@ Codex should use:
 
 - `.engineering/generated/context.md` as the index
 - `.engineering/generated/skills/<skill>/SKILL.md` for shared engineering rules
+- `.codex/skills/<skill>/SKILL.md` when `--install-skills` was used
 - the project context paths declared in `engineering.yaml`
 
 ## Command Reference
@@ -167,6 +183,12 @@ Links cached skills into `.engineering/generated/skills` and creates `.engineeri
 npm run eng -- prepare codex
 ```
 
+With `--install-skills`, it also copies skills into project-local `.codex/skills`.
+
+```bash
+npm run eng -- prepare codex --install-skills
+```
+
 ### `eng doctor`
 
 Checks manifest validity, skill metadata, cache state, generated context, generated skill links, and project context paths.
@@ -181,6 +203,7 @@ The v0.1 CLI supports only:
 
 - local registry: `registry.type: local`
 - Codex adapter: `eng prepare codex`
+- project-local Codex skill install: `eng prepare codex --install-skills`
 - explicit manifest skills
 
 Not yet implemented:

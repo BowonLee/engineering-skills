@@ -11,6 +11,12 @@ async function ensureSymlink(target, linkPath) {
   await fs.symlink(relativeTarget, linkPath, 'dir');
 }
 
+async function copyDir(source, target) {
+  await fs.rm(target, { recursive: true, force: true });
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await fs.cp(source, target, { recursive: true });
+}
+
 async function pathExists(filePath) {
   try {
     await fs.access(filePath);
@@ -35,9 +41,11 @@ function formatContextSection(projectRoot, context) {
 export async function prepareCodex(projectRoot, manifest, options = {}) {
   const root = generatedRoot(projectRoot);
   const skillsRoot = path.join(root, 'skills');
+  const installedSkillsRoot = path.join(projectRoot, '.codex', 'skills');
   await fs.mkdir(skillsRoot, { recursive: true });
 
   const activeSkills = [];
+  const installedSkills = [];
   for (const [skillName, version] of Object.entries(manifest.skills)) {
     const cached = skillCachePath(skillName, version, options.env);
     if (!(await pathExists(cached))) {
@@ -46,6 +54,13 @@ export async function prepareCodex(projectRoot, manifest, options = {}) {
     const metadata = await readSkillMetadata(cached);
     const linkPath = path.join(skillsRoot, skillName);
     await ensureSymlink(cached, linkPath);
+
+    if (options.installSkills) {
+      const installPath = path.join(installedSkillsRoot, skillName);
+      await copyDir(cached, installPath);
+      installedSkills.push({ name: skillName, version, path: installPath });
+    }
+
     activeSkills.push({ ...metadata, version, path: linkPath });
   }
 
@@ -71,5 +86,5 @@ export async function prepareCodex(projectRoot, manifest, options = {}) {
   const contextPath = path.join(root, 'context.md');
   await fs.writeFile(contextPath, contextMd, 'utf8');
 
-  return { contextPath, skillsRoot, activeSkills };
+  return { contextPath, skillsRoot, activeSkills, installedSkills };
 }

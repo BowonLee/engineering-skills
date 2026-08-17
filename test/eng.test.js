@@ -70,6 +70,42 @@ test('prepares a Codex context index with linked skills', async () => {
   await fs.lstat(path.join(tmp, '.engineering', 'generated', 'skills', 'implementation-guidelines'));
 });
 
+test('prepare can install project-local Codex skills', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-project-'));
+  const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));
+  const env = { ENGINEERING_HOME: cacheHome };
+
+  await fs.cp(root, tmp, {
+    recursive: true,
+    filter: fixtureFilter,
+  });
+
+  const manifest = await readManifest(tmp);
+  await syncSkills(tmp, manifest, { env });
+  const result = await prepareCodex(tmp, manifest, { env, installSkills: true });
+
+  assert.equal(result.installedSkills.length, 2);
+  await fs.access(path.join(tmp, '.codex', 'skills', 'implementation-guidelines', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.codex', 'skills', 'code-review', 'skill.yaml'));
+});
+
+test('CLI supports prepare codex --install-skills', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-project-'));
+  const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));
+
+  await fs.cp(root, tmp, {
+    recursive: true,
+    filter: fixtureFilter,
+  });
+
+  const env = { ...process.env, ENGINEERING_HOME: cacheHome };
+  await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'sync'], { env });
+  const result = await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'prepare', 'codex', '--install-skills'], { env });
+
+  assert.match(result.stdout, /installed codex skills:/);
+  await fs.access(path.join(tmp, '.codex', 'skills', 'implementation-guidelines', 'SKILL.md'));
+});
+
 test('prepare reports a clear error when sync has not run', async () => {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-project-'));
   const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));
@@ -212,6 +248,26 @@ test('doctor reports cache and generated state', async () => {
   assert.match(output, /Results: \d+ passed, 0 warnings, 0 failed/);
 });
 
+test('doctor reports installed project-local Codex skills', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-doctor-'));
+  const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));
+  const env = { ENGINEERING_HOME: cacheHome };
+
+  await fs.cp(root, tmp, {
+    recursive: true,
+    filter: fixtureFilter,
+  });
+
+  const manifest = await readManifest(tmp);
+  await syncSkills(tmp, manifest, { env });
+  await prepareCodex(tmp, manifest, { env, installSkills: true });
+
+  const output = formatDoctor(await runDoctor(tmp, { env }));
+  assert.match(output, /Codex skill implementation-guidelines/);
+  assert.match(output, /Codex skill code-review/);
+  assert.match(output, /0 warnings, 0 failed/);
+});
+
 test('CLI supports doctor', async () => {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-doctor-'));
   const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));
@@ -238,6 +294,7 @@ test('usage documentation is included in the project', async () => {
   assert.match(usage, /eng init --discover/);
   assert.match(usage, /eng sync/);
   assert.match(usage, /eng prepare codex/);
+  assert.match(usage, /eng prepare codex --install-skills/);
   assert.match(usage, /eng doctor/);
   assert.match(usage, /Use From Another Project/);
   assert.match(usage, /Codex Workflow/);

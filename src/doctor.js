@@ -109,6 +109,26 @@ async function checkGenerated(projectRoot, manifest) {
   return checks;
 }
 
+async function checkCodexInstalledSkills(projectRoot, manifest) {
+  const checks = [];
+  const root = path.join(projectRoot, '.codex', 'skills');
+  if (!(await pathExists(root))) {
+    checks.push(pass('Codex skills', `not installed at ${root} (optional); run eng prepare codex --install-skills if native Codex skills are wanted`));
+    return checks;
+  }
+
+  for (const skillName of Object.keys(manifest.skills)) {
+    const skillPath = path.join(root, skillName, 'SKILL.md');
+    if (await pathExists(skillPath)) {
+      checks.push(pass(`Codex skill ${skillName}`, skillPath));
+    } else {
+      checks.push(warn(`Codex skill ${skillName}`, `missing ${skillPath}`));
+    }
+  }
+
+  return checks;
+}
+
 async function checkContext(projectRoot, manifest) {
   const checks = [];
   for (const [name, relativePath] of Object.entries(manifest.context)) {
@@ -131,6 +151,7 @@ export async function runDoctor(projectRoot, options = {}) {
   checks.push(...(await checkDeclaredSkills(projectRoot, manifest)));
   checks.push(...(await checkCache(manifest, options.env)));
   checks.push(...(await checkGenerated(projectRoot, manifest)));
+  checks.push(...(await checkCodexInstalledSkills(projectRoot, manifest)));
   checks.push(...(await checkContext(projectRoot, manifest)));
 
   return { checks };

@@ -1,5 +1,6 @@
 .engineering/generated/
 .omx/
+.codex/skills/
 node_modules/
 coverage/
 .DS_Store

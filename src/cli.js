@@ -11,7 +11,7 @@ function usage() {
   return `Usage:
   eng sync
   eng init --discover
-  eng prepare codex
+  eng prepare codex [--install-skills]
   eng doctor
 
 Options:
@@ -23,6 +23,7 @@ function parseArgs(argv) {
   const args = [...argv];
   let projectRoot = process.cwd();
   const positionals = [];
+  const flags = new Set();
 
   while (args.length > 0) {
     const arg = args.shift();
@@ -33,16 +34,20 @@ function parseArgs(argv) {
       continue;
     }
     if (arg === '--help' || arg === '-h') {
-      return { help: true, projectRoot, positionals };
+      return { help: true, projectRoot, positionals, flags };
+    }
+    if (arg.startsWith('--')) {
+      flags.add(arg);
+      continue;
     }
     positionals.push(arg);
   }
 
-  return { projectRoot, positionals };
+  return { projectRoot, positionals, flags };
 }
 
 async function main() {
-  const { help, projectRoot, positionals } = parseArgs(process.argv.slice(2));
+  const { help, projectRoot, positionals, flags } = parseArgs(process.argv.slice(2));
   if (help || positionals.length === 0) {
     console.log(usage());
     return;
@@ -50,7 +55,7 @@ async function main() {
 
   const [command, target] = positionals;
 
-  if (command === 'init' && target === '--discover') {
+  if (command === 'init' && (target === '--discover' || flags.has('--discover'))) {
     const discovery = await discoverProject(projectRoot);
     console.log(formatDiscovery(discovery));
     return;
@@ -78,9 +83,12 @@ async function main() {
   }
 
   if (command === 'prepare' && target === 'codex') {
-    const result = await prepareCodex(projectRoot, manifest);
+    const result = await prepareCodex(projectRoot, manifest, { installSkills: flags.has('--install-skills') });
     console.log(`prepared codex context: ${result.contextPath}`);
     console.log(`linked skills: ${result.activeSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
+    if (result.installedSkills.length > 0) {
+      console.log(`installed codex skills: ${result.installedSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
+    }
     return;
   }
 

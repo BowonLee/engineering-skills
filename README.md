@@ -16,6 +16,7 @@ Implemented:
 - Read-only repository discovery with `eng init --discover`
 - `eng sync`
 - `eng prepare codex`
+- Project-local Codex skill install with `eng prepare codex --install-skills`
 - `eng doctor`
 - Codex context index at `.engineering/generated/context.md`
 
@@ -86,6 +87,12 @@ Prepare Codex context for the current project:
 
 ```bash
 npm run eng -- prepare codex
+```
+
+Also install project-local Codex native skills:
+
+```bash
+npm run eng -- prepare codex --install-skills
 ```
 
 Check manifest, skill metadata, cache, generated context, and context paths:
