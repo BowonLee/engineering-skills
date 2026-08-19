@@ -301,6 +301,6 @@ test('usage documentation is included in the project', async () => {
   assert.match(usage, /Use From Another Project/);
   assert.match(usage, /Codex Workflow/);
   assert.equal(packageJson.name, '@bowonlee/engineering-skills');
-  assert.equal(packageJson.bin.eng, './src/cli.js');
+  assert.equal(packageJson.bin.eng, 'src/cli.js');
   assert.equal(packageJson.publishConfig.access, 'public');
 });

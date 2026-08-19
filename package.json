@@ -22,7 +22,7 @@
     "context"
   ],
   "bin": {
-    "eng": "./src/cli.js"
+    "eng": "src/cli.js"
   },
   "scripts": {
     "test": "node --test",
