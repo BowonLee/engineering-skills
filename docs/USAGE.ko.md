@@ -78,6 +78,7 @@ Claude Code:
 ## 기존 프로젝트에 적용
 
 프로젝트 루트에서 실행합니다.
+`/path/to/project`는 예시 경로이므로 실제 프로젝트 경로로 바꿔야 합니다.
 
 ```bash
 cd /path/to/project

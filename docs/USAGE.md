@@ -11,7 +11,7 @@ The tool uses this flow:
 ```text
 engineering.yaml
   -> bakeflow sync
-  -> ~/.engineering/cache
+  -> .engineering/cache
   -> bakeflow prepare codex
   -> .engineering/generated/context.md
   -> optional .codex/skills install
@@ -20,13 +20,13 @@ engineering.yaml
 
 `engineering.yaml` is the project manifest. It declares which shared skills the project uses and where project-specific context lives.
 
-The shared cache defaults to:
+The CLI cache defaults to the current project's `.engineering/cache`:
 
 ```text
-~/.engineering/cache
+.engineering/cache
 ```
 
-You can override it:
+You can override it with `ENGINEERING_HOME` when you intentionally want a shared cache:
 
 ```bash
 ENGINEERING_HOME=/tmp/engineering npm run bakeflow -- sync
@@ -162,7 +162,7 @@ npm run bakeflow -- doctor
 Expected healthy doctor result:
 
 ```text
-Results: 12 passed, 0 warnings, 0 failed
+Results: 14 passed, 0 warnings, 0 failed
 ```
 
 Run tests:
@@ -206,6 +206,8 @@ context:
 
 From this repository, run against the target project:
 
+Replace `/path/to/project` with the real absolute or relative path to the target project.
+
 ```bash
 npm run bakeflow -- --project /path/to/project init --discover
 npm run bakeflow -- --project /path/to/project sync
@@ -227,6 +229,8 @@ node /Users/ibowon/workspace/engineering-skills/src/cli.js doctor
 ## Codex Workflow
 
 Before asking Codex to work on a target project, run:
+
+Replace `/path/to/project` with the real absolute or relative path to the target project.
 
 ```bash
 npm run bakeflow -- --project /path/to/project sync

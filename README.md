@@ -41,7 +41,7 @@ Implemented:
 
 - `engineering.yaml` manifest
 - Local skill registry under `skills/`
-- Shared cache under `${ENGINEERING_HOME:-~/.engineering}/cache`
+- Project-local cache under `.engineering/cache` unless `ENGINEERING_HOME` is set
 - One-command npx setup with `bakeflow setup --codex` or `bakeflow setup --claude`
 - Read-only repository discovery with `bakeflow init --discover`
 - `bakeflow sync`
@@ -187,6 +187,8 @@ The npm package includes:
 
 Use another project root:
 
+Replace `/path/to/project` with the real absolute or relative path to the target project.
+
 ```bash
 npm run bakeflow -- --project /path/to/project init --discover
 npm run bakeflow -- --project /path/to/project sync
@@ -202,8 +204,8 @@ npm run bakeflow -- --project /path/to/project doctor
 .engineering/generated/
 ├── context.md
 └── skills/
-    ├── code-review -> ~/.engineering/cache/code-review/0.1.0
-    └── implementation-guidelines -> ~/.engineering/cache/implementation-guidelines/0.1.0
+    ├── code-review -> .engineering/cache/code-review/0.1.0
+    └── implementation-guidelines -> .engineering/cache/implementation-guidelines/0.1.0
 ```
 
 Generated files are ignored by Git. Agents should read `.engineering/generated/context.md` first, then open only the relevant skill and project context files for the current task.

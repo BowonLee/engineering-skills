@@ -206,6 +206,22 @@ test('CLI supports --project for sync and prepare', async () => {
   assert.match(context, /Effective Engineering Context/);
 });
 
+test('CLI defaults cache to the project .engineering directory', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'bakeflow-project-cache-'));
+
+  await fs.cp(root, tmp, {
+    recursive: true,
+    filter: fixtureFilter,
+  });
+
+  const env = { ...process.env };
+  delete env.ENGINEERING_HOME;
+  await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'sync'], { env });
+
+  await fs.access(path.join(tmp, '.engineering', 'cache', 'implementation-guidelines', '0.1.0', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.engineering', 'cache', 'code-review', '0.1.0', 'skill.yaml'));
+});
+
 test('sync rejects missing skills and version mismatches', async () => {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-project-'));
   const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));

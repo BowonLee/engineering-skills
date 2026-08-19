@@ -50,8 +50,16 @@ function parseArgs(argv) {
   return { projectRoot, positionals, flags };
 }
 
+function projectEnv(projectRoot) {
+  return {
+    ...process.env,
+    ENGINEERING_HOME: process.env.ENGINEERING_HOME || path.join(projectRoot, '.engineering'),
+  };
+}
+
 async function main() {
   const { help, projectRoot, positionals, flags } = parseArgs(process.argv.slice(2));
+  const env = projectEnv(projectRoot);
   if (help || positionals.length === 0) {
     console.log(usage());
     return;
@@ -69,6 +77,7 @@ async function main() {
     const result = await setupProject(projectRoot, {
       codex: wantsCodex || (!target && !wantsClaude),
       claude: wantsClaude,
+      env,
     });
     console.log(formatSetup(result));
     if (result.doctor.checks.some((check) => check.status === 'fail')) {
@@ -84,7 +93,7 @@ async function main() {
   }
 
   if (command === 'doctor') {
-    const result = await runDoctor(projectRoot);
+    const result = await runDoctor(projectRoot, { env });
     console.log(formatDoctor(result));
     if (result.checks.some((check) => check.status === 'fail')) {
       process.exitCode = 1;
@@ -95,7 +104,7 @@ async function main() {
   const manifest = await readManifest(projectRoot);
 
   if (command === 'sync') {
-    const results = await syncSkills(projectRoot, manifest);
+    const results = await syncSkills(projectRoot, manifest, { env });
     for (const result of results) {
       console.log(`${result.status} ${result.name}@${result.version}`);
       console.log(`  from ${result.source}`);
@@ -105,7 +114,7 @@ async function main() {
   }
 
   if (command === 'prepare' && target === 'codex') {
-    const result = await prepareCodex(projectRoot, manifest, { installSkills: flags.has('--install-skills') });
+    const result = await prepareCodex(projectRoot, manifest, { env, installSkills: flags.has('--install-skills') });
     console.log(`prepared codex context: ${result.contextPath}`);
     console.log(`linked skills: ${result.activeSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
     if (result.installedSkills.length > 0) {
@@ -115,7 +124,7 @@ async function main() {
   }
 
   if (command === 'prepare' && target === 'claude') {
-    const result = await prepareClaude(projectRoot, manifest);
+    const result = await prepareClaude(projectRoot, manifest, { env });
     console.log(`prepared claude context: ${result.contextPath}`);
     console.log(`installed claude skills: ${result.activeSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
     console.log(`${result.claudeMd.status} claude instructions: ${result.claudeMd.path}`);
