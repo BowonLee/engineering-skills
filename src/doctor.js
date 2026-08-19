@@ -86,10 +86,13 @@ async function checkGenerated(projectRoot, manifest) {
   const checks = [];
   const root = generatedRoot(projectRoot);
   const contextPath = path.join(root, 'context.md');
+  const claudeContextPath = path.join(root, 'claude-context.md');
   if (await pathExists(contextPath)) {
     checks.push(pass('Generated context', contextPath));
+  } else if (await pathExists(claudeContextPath)) {
+    checks.push(pass('Generated context', claudeContextPath));
   } else {
-    checks.push(warn('Generated context', `missing ${contextPath}; run bakeflow prepare codex`));
+    checks.push(warn('Generated context', `missing ${contextPath}; run bakeflow prepare codex or bakeflow prepare claude`));
   }
 
   for (const skillName of Object.keys(manifest.skills)) {

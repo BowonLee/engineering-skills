@@ -13,7 +13,7 @@ Implemented:
 - `engineering.yaml` manifest
 - Local skill registry under `skills/`
 - Shared cache under `${ENGINEERING_HOME:-~/.engineering}/cache`
-- One-command npx setup with `bakeflow setup --codex`
+- One-command npx setup with `bakeflow setup --codex` or `bakeflow setup --claude`
 - Read-only repository discovery with `bakeflow init --discover`
 - `bakeflow sync`
 - `bakeflow prepare codex`
@@ -43,6 +43,7 @@ Run directly with npx in any project:
 
 ```bash
 npx --yes @bakerleebb/bakeflow setup --codex
+npx --yes @bakerleebb/bakeflow setup --claude
 ```
 
 Install directly from GitHub:
@@ -100,6 +101,18 @@ Set up a project for Codex in one command:
 npx --yes @bakerleebb/bakeflow setup --codex
 ```
 
+Set up a project for Claude Code in one command:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --claude
+```
+
+Set up both adapters:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup all
+```
+
 Inspect the current project without changing files:
 
 ```bash
@@ -152,6 +165,17 @@ npm run bakeflow -- --project /path/to/project doctor
 ```
 
 Generated files are ignored by Git. Agents should read `.engineering/generated/context.md` first, then open only the relevant skill and project context files for the current task.
+
+`bakeflow prepare claude` creates:
+
+```text
+.engineering/generated/claude-context.md
+.claude/
+├── CLAUDE.md
+└── skills/
+    ├── code-review/
+    └── implementation-guidelines/
+```
 
 ## Skill Format
 

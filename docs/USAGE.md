@@ -56,6 +56,18 @@ This command:
 - runs `bakeflow doctor`
 - updates `.gitignore` with generated/cache paths
 
+For Claude Code:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --claude
+```
+
+For both Codex and Claude Code:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup all
+```
+
 The generated project files are:
 
 ```text
@@ -68,6 +80,10 @@ The generated project files are:
     └── skills/
 
 .codex/
+└── skills/
+
+.claude/
+├── CLAUDE.md
 └── skills/
 ```
 
@@ -90,9 +106,11 @@ After a global install, use:
 ```bash
 bakeflow --help
 bakeflow setup --codex
+bakeflow setup --claude
 bakeflow init --discover
 bakeflow sync
 bakeflow prepare codex
+bakeflow prepare claude
 bakeflow doctor
 ```
 
@@ -226,6 +244,22 @@ npx --yes @bakerleebb/bakeflow setup --codex
 
 If `engineering.yaml` is missing, Bakeflow creates a default manifest and project-local skill registry under `.engineering/registry`. If the manifest already exists, Bakeflow uses it as-is.
 
+### `bakeflow setup --claude`
+
+Bootstraps and verifies a project for Claude Code in one command.
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --claude
+```
+
+This creates `.engineering/generated/claude-context.md`, installs project skills under `.claude/skills/`, and creates or updates `.claude/CLAUDE.md` with a Bakeflow instruction block. Claude Code loads project instructions from `CLAUDE.md` or `.claude/CLAUDE.md`, and project skills from `.claude/skills/<skill-name>/SKILL.md`.
+
+To set up both adapters:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup all
+```
+
 ### `bakeflow init --discover`
 
 Reads the project structure and reports observed paths, discovered skills, and unknown context. It does not write files.
@@ -256,6 +290,14 @@ With `--install-skills`, it also copies skills into project-local `.codex/skills
 npm run bakeflow -- prepare codex --install-skills
 ```
 
+### `bakeflow prepare claude`
+
+Installs cached skills into `.claude/skills`, creates `.engineering/generated/claude-context.md`, and writes a managed Bakeflow block into `.claude/CLAUDE.md`.
+
+```bash
+npm run bakeflow -- prepare claude
+```
+
 ### `bakeflow doctor`
 
 Checks manifest validity, skill metadata, cache state, generated context, generated skill links, and project context paths.
@@ -271,6 +313,7 @@ The v0.1 CLI supports only:
 - local registry: `registry.type: local`
 - Codex adapter: `bakeflow prepare codex`
 - project-local Codex skill install: `bakeflow prepare codex --install-skills`
+- Claude Code adapter: `bakeflow prepare claude`
 - explicit manifest skills
 
 Not yet implemented:
@@ -281,4 +324,4 @@ Not yet implemented:
 - project extensions under `.engineering/overrides`
 - interactive `bakeflow init --configure`
 - `bakeflow apply`
-- adapters for Claude, OMC, and OMX
+- adapters for OMC and OMX

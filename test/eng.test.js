@@ -124,6 +124,41 @@ test('setup bootstraps an empty project for npx-style usage', async () => {
   await fs.access(path.join(tmp, '.codex', 'skills', 'code-review', 'skill.yaml'));
 });
 
+test('setup can bootstrap Claude Code project skills', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'bakeflow-claude-'));
+
+  const env = { ...process.env };
+  delete env.ENGINEERING_HOME;
+  const result = await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'setup', '--claude'], { env });
+
+  assert.match(result.stdout, /prepared claude context:/);
+  assert.match(result.stdout, /installed claude skills:/);
+  assert.match(result.stdout, /Results: \d+ passed, 0 warnings, 0 failed/);
+  const claudeSkill = await fs.readFile(path.join(tmp, '.claude', 'skills', 'implementation-guidelines', 'SKILL.md'), 'utf8');
+  assert.match(claudeSkill, /^---\nname: implementation-guidelines\n/m);
+  assert.match(claudeSkill, /description: Shared implementation principles/);
+  await fs.access(path.join(tmp, '.engineering', 'generated', 'claude-context.md'));
+  await fs.access(path.join(tmp, '.claude', 'CLAUDE.md'));
+});
+
+test('CLI supports prepare claude', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'bakeflow-claude-'));
+  const cacheHome = await fs.mkdtemp(path.join(os.tmpdir(), 'eng-cache-'));
+
+  await fs.cp(root, tmp, {
+    recursive: true,
+    filter: fixtureFilter,
+  });
+
+  const env = { ...process.env, ENGINEERING_HOME: cacheHome };
+  await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'sync'], { env });
+  const result = await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'prepare', 'claude'], { env });
+
+  assert.match(result.stdout, /prepared claude context:/);
+  assert.match(result.stdout, /created claude instructions:/);
+  await fs.access(path.join(tmp, '.claude', 'skills', 'code-review', 'SKILL.md'));
+});
+
 test('setupProject reports healthy doctor state', async () => {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'bakeflow-setup-'));
   const result = await setupProject(tmp, { env: {} });
@@ -322,6 +357,8 @@ test('usage documentation is included in the project', async () => {
   assert.match(readme, /npm install -g @bakerleebb\/bakeflow/);
   assert.match(usage, /bakeflow init --discover/);
   assert.match(usage, /bakeflow setup --codex/);
+  assert.match(usage, /bakeflow setup --claude/);
+  assert.match(usage, /bakeflow prepare claude/);
   assert.match(usage, /bakeflow sync/);
   assert.match(usage, /bakeflow prepare codex/);
   assert.match(usage, /bakeflow prepare codex --install-skills/);

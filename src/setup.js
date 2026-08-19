@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { syncSkills } from './cache.js';
 import { readManifest } from './manifest.js';
 import { prepareCodex } from './prepare.js';
+import { prepareClaude } from './claude.js';
 import { formatDoctor, runDoctor } from './doctor.js';
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -29,7 +30,7 @@ async function ensureDir(dirPath) {
 
 async function ensureIgnored(projectRoot) {
   const gitignorePath = path.join(projectRoot, '.gitignore');
-  const entries = ['.engineering/cache/', '.engineering/registry/', '.engineering/generated/', '.codex/skills/'];
+  const entries = ['.engineering/cache/', '.engineering/registry/', '.engineering/generated/', '.codex/skills/', '.claude/skills/'];
   let content = '';
   if (await pathExists(gitignorePath)) {
     content = await fs.readFile(gitignorePath, 'utf8');
@@ -77,9 +78,7 @@ async function writeDefaultManifest(projectRoot) {
 
 export async function setupProject(projectRoot, options = {}) {
   const codex = options.codex ?? true;
-  if (!codex) {
-    throw new Error('Only the Codex setup target is supported in v0.1.1.');
-  }
+  const claude = options.claude ?? false;
 
   const bootstrap = await writeDefaultManifest(projectRoot);
   const ignored = await ensureIgnored(projectRoot);
@@ -91,7 +90,8 @@ export async function setupProject(projectRoot, options = {}) {
 
   const manifest = await readManifest(projectRoot);
   const synced = await syncSkills(projectRoot, manifest, { env });
-  const prepared = await prepareCodex(projectRoot, manifest, { env, installSkills: true });
+  const prepared = codex ? await prepareCodex(projectRoot, manifest, { env, installSkills: true }) : null;
+  const preparedClaude = claude ? await prepareClaude(projectRoot, manifest, { env }) : null;
   const doctor = await runDoctor(projectRoot, { env });
 
   return {
@@ -99,6 +99,7 @@ export async function setupProject(projectRoot, options = {}) {
     ignored,
     synced,
     prepared,
+    preparedClaude,
     doctor,
     engineeringHome: env.ENGINEERING_HOME,
   };
@@ -117,8 +118,15 @@ export function formatSetup(result) {
     lines.push(`- ${skill.status} ${skill.name}@${skill.version}`);
   }
   lines.push('');
-  lines.push(`prepared codex context: ${result.prepared.contextPath}`);
-  lines.push(`installed codex skills: ${result.prepared.installedSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
+  if (result.prepared) {
+    lines.push(`prepared codex context: ${result.prepared.contextPath}`);
+    lines.push(`installed codex skills: ${result.prepared.installedSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
+  }
+  if (result.preparedClaude) {
+    lines.push(`prepared claude context: ${result.preparedClaude.contextPath}`);
+    lines.push(`installed claude skills: ${result.preparedClaude.activeSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
+    lines.push(`${result.preparedClaude.claudeMd.status} claude instructions: ${result.preparedClaude.claudeMd.path}`);
+  }
   lines.push('');
   lines.push(formatDoctor(result.doctor));
   return lines.join('\n');

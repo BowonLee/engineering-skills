@@ -4,6 +4,7 @@ import path from 'node:path';
 import { readManifest } from './manifest.js';
 import { syncSkills } from './cache.js';
 import { prepareCodex } from './prepare.js';
+import { prepareClaude } from './claude.js';
 import { discoverProject, formatDiscovery } from './discover.js';
 import { formatDoctor, runDoctor } from './doctor.js';
 import { formatSetup, setupProject } from './setup.js';
@@ -11,9 +12,10 @@ import { formatSetup, setupProject } from './setup.js';
 function usage() {
   return `Usage:
   bakeflow sync
-  bakeflow setup [--codex]
+  bakeflow setup [codex|claude|all] [--codex] [--claude]
   bakeflow init --discover
   bakeflow prepare codex [--install-skills]
+  bakeflow prepare claude
   bakeflow doctor
 
 Options:
@@ -58,10 +60,16 @@ async function main() {
   const [command, target] = positionals;
 
   if (command === 'setup') {
-    if (target && target !== 'codex') {
+    const knownTargets = new Set(['codex', 'claude', 'all']);
+    if (target && !knownTargets.has(target)) {
       throw new Error(`Unknown setup target: ${target}`);
     }
-    const result = await setupProject(projectRoot, { codex: target === 'codex' || flags.has('--codex') || !target });
+    const wantsCodex = target === 'codex' || target === 'all' || flags.has('--codex');
+    const wantsClaude = target === 'claude' || target === 'all' || flags.has('--claude');
+    const result = await setupProject(projectRoot, {
+      codex: wantsCodex || (!target && !wantsClaude),
+      claude: wantsClaude,
+    });
     console.log(formatSetup(result));
     if (result.doctor.checks.some((check) => check.status === 'fail')) {
       process.exitCode = 1;
@@ -103,6 +111,14 @@ async function main() {
     if (result.installedSkills.length > 0) {
       console.log(`installed codex skills: ${result.installedSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
     }
+    return;
+  }
+
+  if (command === 'prepare' && target === 'claude') {
+    const result = await prepareClaude(projectRoot, manifest);
+    console.log(`prepared claude context: ${result.contextPath}`);
+    console.log(`installed claude skills: ${result.activeSkills.map((skill) => `${skill.name}@${skill.version}`).join(', ')}`);
+    console.log(`${result.claudeMd.status} claude instructions: ${result.claudeMd.path}`);
     return;
   }
 
