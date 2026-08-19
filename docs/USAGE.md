@@ -1,5 +1,7 @@
 # Bakeflow Usage
 
+English | [한국어](USAGE.ko.md)
+
 This guide explains how to use the `bakeflow` CLI in this repository and how to apply the shared skills to another project.
 
 ## Concepts
@@ -66,6 +68,13 @@ For both Codex and Claude Code:
 
 ```bash
 npx --yes @bakerleebb/bakeflow setup all
+```
+
+Verify the package before setup:
+
+```bash
+npm view @bakerleebb/bakeflow version
+npx --yes @bakerleebb/bakeflow --help
 ```
 
 The generated project files are:
@@ -162,6 +171,17 @@ Run tests:
 npm test
 npm run pack:check
 ```
+
+## Published Package Check
+
+The package is intended to be inspectable from npm:
+
+```bash
+npm view @bakerleebb/bakeflow name version bin files --json
+npm pack @bakerleebb/bakeflow --dry-run
+```
+
+The package should include both English and Korean documentation, the CLI source, schemas, and bundled skills.
 
 ## Use From Another Project
 

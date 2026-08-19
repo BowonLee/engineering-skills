@@ -350,11 +350,16 @@ test('CLI supports doctor', async () => {
 
 test('usage documentation is included in the project', async () => {
   const readme = await fs.readFile(path.join(root, 'README.md'), 'utf8');
+  const readmeKo = await fs.readFile(path.join(root, 'README.ko.md'), 'utf8');
   const usage = await fs.readFile(path.join(root, 'docs', 'USAGE.md'), 'utf8');
+  const usageKo = await fs.readFile(path.join(root, 'docs', 'USAGE.ko.md'), 'utf8');
   const packageJson = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
 
   assert.match(readme, /docs\/USAGE\.md/);
+  assert.match(readme, /README\.ko\.md/);
   assert.match(readme, /npm install -g @bakerleebb\/bakeflow/);
+  assert.match(readmeKo, /Bakeflow는/);
+  assert.match(readmeKo, /docs\/USAGE\.ko\.md/);
   assert.match(usage, /bakeflow init --discover/);
   assert.match(usage, /bakeflow setup --codex/);
   assert.match(usage, /bakeflow setup --claude/);
@@ -365,7 +370,10 @@ test('usage documentation is included in the project', async () => {
   assert.match(usage, /bakeflow doctor/);
   assert.match(usage, /Use From Another Project/);
   assert.match(usage, /Codex Workflow/);
+  assert.match(usageKo, /npx 한 줄 설정/);
+  assert.match(usageKo, /Claude Code용/);
   assert.equal(packageJson.name, '@bakerleebb/bakeflow');
   assert.equal(packageJson.bin.bakeflow, 'src/cli.js');
+  assert.equal(packageJson.files.includes('README.ko.md'), true);
   assert.equal(packageJson.publishConfig.access, 'public');
 });

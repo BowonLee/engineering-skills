@@ -2,9 +2,38 @@
 
 Reusable engineering skill baking and context management for AI coding agents.
 
-This repository implements the v0.1 MVP described in `engineering-skills-architecture.md`: a manifest-driven resolver that syncs shared skills into a local cache and prepares an agent-readable context index for Codex.
+English | [한국어](README.ko.md)
 
-For practical setup and day-to-day usage, read [docs/USAGE.md](docs/USAGE.md).
+Bakeflow is a manifest-driven CLI for packaging reusable engineering skills and preparing agent-readable project context. It installs shared skills into project-local locations for Codex and Claude Code, then verifies the result with `bakeflow doctor`.
+
+For practical setup and day-to-day usage, read [docs/USAGE.md](docs/USAGE.md). Korean usage documentation is available at [docs/USAGE.ko.md](docs/USAGE.ko.md).
+
+## Quick Start
+
+Set up Codex project skills:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --codex
+```
+
+Set up Claude Code project skills:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --claude
+```
+
+Set up both:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup all
+```
+
+Verify the published package:
+
+```bash
+npm view @bakerleebb/bakeflow version
+npx --yes @bakerleebb/bakeflow --help
+```
 
 ## Current Scope
 
@@ -18,8 +47,10 @@ Implemented:
 - `bakeflow sync`
 - `bakeflow prepare codex`
 - Project-local Codex skill install with `bakeflow prepare codex --install-skills`
+- Claude Code skill install with `bakeflow prepare claude`
 - `bakeflow doctor`
 - Codex context index at `.engineering/generated/context.md`
+- Claude context index at `.engineering/generated/claude-context.md`
 
 Deferred:
 
@@ -30,7 +61,7 @@ Deferred:
 - Project extensions and initialization interviews
 - Additional adapters
 
-## Install
+## Installation
 
 Install as a global CLI package:
 
@@ -142,6 +173,17 @@ Check manifest, skill metadata, cache, generated context, and context paths:
 ```bash
 npm run bakeflow -- doctor
 ```
+
+## Package Contents
+
+The npm package includes:
+
+- CLI source under `src/`
+- built-in engineering skills under `skills/`
+- JSON schemas under `schemas/`
+- English documentation: `README.md`, `docs/USAGE.md`
+- Korean documentation: `README.ko.md`, `docs/USAGE.ko.md`
+- architecture note: `engineering-skills-architecture.md`
 
 Use another project root:
 
