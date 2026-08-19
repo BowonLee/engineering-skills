@@ -74,7 +74,7 @@ async function checkCache(manifest, env) {
   for (const [skillName, version] of Object.entries(manifest.skills)) {
     const cached = skillCachePath(skillName, version, env);
     if (!(await pathExists(cached))) {
-      checks.push(fail(`Cache ${skillName}`, `missing ${cached}; run eng sync`));
+      checks.push(fail(`Cache ${skillName}`, `missing ${cached}; run bakeflow sync`));
       continue;
     }
     checks.push(pass(`Cache ${skillName}`, `found ${cached}`));
@@ -89,7 +89,7 @@ async function checkGenerated(projectRoot, manifest) {
   if (await pathExists(contextPath)) {
     checks.push(pass('Generated context', contextPath));
   } else {
-    checks.push(warn('Generated context', `missing ${contextPath}; run eng prepare codex`));
+    checks.push(warn('Generated context', `missing ${contextPath}; run bakeflow prepare codex`));
   }
 
   for (const skillName of Object.keys(manifest.skills)) {
@@ -102,7 +102,7 @@ async function checkGenerated(projectRoot, manifest) {
       }
       checks.push(pass(`Generated skill ${skillName}`, `${linkPath} is linked`));
     } catch {
-      checks.push(warn(`Generated skill ${skillName}`, `missing ${linkPath}; run eng prepare codex`));
+      checks.push(warn(`Generated skill ${skillName}`, `missing ${linkPath}; run bakeflow prepare codex`));
     }
   }
 
@@ -113,7 +113,7 @@ async function checkCodexInstalledSkills(projectRoot, manifest) {
   const checks = [];
   const root = path.join(projectRoot, '.codex', 'skills');
   if (!(await pathExists(root))) {
-    checks.push(pass('Codex skills', `not installed at ${root} (optional); run eng prepare codex --install-skills if native Codex skills are wanted`));
+    checks.push(pass('Codex skills', `not installed at ${root} (optional); run bakeflow prepare codex --install-skills if native Codex skills are wanted`));
     return checks;
   }
 
@@ -159,7 +159,7 @@ export async function runDoctor(projectRoot, options = {}) {
 
 export function formatDoctor(result) {
   const statusLabel = { pass: 'OK', warn: '!!', fail: 'XX' };
-  const lines = ['Engineering Skills Doctor', ''];
+  const lines = ['Bakeflow Doctor', ''];
   for (const check of result.checks) {
     lines.push(`[${statusLabel[check.status]}] ${check.name}: ${check.message}`);
   }

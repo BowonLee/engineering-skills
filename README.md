@@ -1,6 +1,6 @@
-# Engineering Skills
+# Bakeflow
 
-Reusable engineering skill management for AI coding agents.
+Reusable engineering skill baking and context management for AI coding agents.
 
 This repository implements the v0.1 MVP described in `engineering-skills-architecture.md`: a manifest-driven resolver that syncs shared skills into a local cache and prepares an agent-readable context index for Codex.
 
@@ -13,17 +13,17 @@ Implemented:
 - `engineering.yaml` manifest
 - Local skill registry under `skills/`
 - Shared cache under `${ENGINEERING_HOME:-~/.engineering}/cache`
-- Read-only repository discovery with `eng init --discover`
-- `eng sync`
-- `eng prepare codex`
-- Project-local Codex skill install with `eng prepare codex --install-skills`
-- `eng doctor`
+- Read-only repository discovery with `bakeflow init --discover`
+- `bakeflow sync`
+- `bakeflow prepare codex`
+- Project-local Codex skill install with `bakeflow prepare codex --install-skills`
+- `bakeflow doctor`
 - Codex context index at `.engineering/generated/context.md`
 
 Deferred:
 
 - Git registry resolution
-- `eng init`
+- `bakeflow init`
 - `engineering.lock`
 - Skill dependency resolution
 - Project extensions and initialization interviews
@@ -34,15 +34,15 @@ Deferred:
 Install as a global CLI package:
 
 ```bash
-npm install -g @bowonlee/engineering-skills
-eng --help
+npm install -g @bakerleebb/bakeflow
+bakeflow --help
 ```
 
 Install directly from GitHub:
 
 ```bash
 npm install -g git+ssh://git@github.com/BowonLee/engineering-skills.git
-eng --help
+bakeflow --help
 ```
 
 For local development:
@@ -54,14 +54,14 @@ npm install
 Run the CLI from this repository:
 
 ```bash
-npm run eng -- --help
+npm run bakeflow -- --help
 ```
 
 Or link it locally:
 
 ```bash
 npm link
-eng --help
+bakeflow --help
 ```
 
 ## Manifest
@@ -90,45 +90,45 @@ context:
 Inspect the current project without changing files:
 
 ```bash
-npm run eng -- init --discover
+npm run bakeflow -- init --discover
 ```
 
 Sync declared skills into the shared cache:
 
 ```bash
-npm run eng -- sync
+npm run bakeflow -- sync
 ```
 
 Prepare Codex context for the current project:
 
 ```bash
-npm run eng -- prepare codex
+npm run bakeflow -- prepare codex
 ```
 
 Also install project-local Codex native skills:
 
 ```bash
-npm run eng -- prepare codex --install-skills
+npm run bakeflow -- prepare codex --install-skills
 ```
 
 Check manifest, skill metadata, cache, generated context, and context paths:
 
 ```bash
-npm run eng -- doctor
+npm run bakeflow -- doctor
 ```
 
 Use another project root:
 
 ```bash
-npm run eng -- --project /path/to/project init --discover
-npm run eng -- --project /path/to/project sync
-npm run eng -- --project /path/to/project prepare codex
-npm run eng -- --project /path/to/project doctor
+npm run bakeflow -- --project /path/to/project init --discover
+npm run bakeflow -- --project /path/to/project sync
+npm run bakeflow -- --project /path/to/project prepare codex
+npm run bakeflow -- --project /path/to/project doctor
 ```
 
 ## Generated Output
 
-`eng prepare codex` creates:
+`bakeflow prepare codex` creates:
 
 ```text
 .engineering/generated/

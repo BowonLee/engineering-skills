@@ -1,6 +1,6 @@
-# Engineering Skills Usage
+# Bakeflow Usage
 
-This guide explains how to use the `eng` CLI in this repository and how to apply the shared skills to another project.
+This guide explains how to use the `bakeflow` CLI in this repository and how to apply the shared skills to another project.
 
 ## Concepts
 
@@ -8,9 +8,9 @@ The tool uses this flow:
 
 ```text
 engineering.yaml
-  -> eng sync
+  -> bakeflow sync
   -> ~/.engineering/cache
-  -> eng prepare codex
+  -> bakeflow prepare codex
   -> .engineering/generated/context.md
   -> optional .codex/skills install
   -> Codex reads the generated context and relevant skills
@@ -27,7 +27,7 @@ The shared cache defaults to:
 You can override it:
 
 ```bash
-ENGINEERING_HOME=/tmp/engineering npm run eng -- sync
+ENGINEERING_HOME=/tmp/engineering npm run bakeflow -- sync
 ```
 
 Generated project files are written under:
@@ -43,7 +43,7 @@ Generated files are intentionally ignored by Git.
 Install as a global CLI package:
 
 ```bash
-npm install -g @bowonlee/engineering-skills
+npm install -g @bakerleebb/bakeflow
 ```
 
 Install directly from GitHub:
@@ -55,11 +55,11 @@ npm install -g git+ssh://git@github.com/BowonLee/engineering-skills.git
 After a global install, use:
 
 ```bash
-eng --help
-eng init --discover
-eng sync
-eng prepare codex
-eng doctor
+bakeflow --help
+bakeflow init --discover
+bakeflow sync
+bakeflow prepare codex
+bakeflow doctor
 ```
 
 For local development, install dependencies:
@@ -71,31 +71,31 @@ npm install
 Inspect the repository without changing files:
 
 ```bash
-npm run eng -- init --discover
+npm run bakeflow -- init --discover
 ```
 
 Sync skills into the shared cache:
 
 ```bash
-npm run eng -- sync
+npm run bakeflow -- sync
 ```
 
 Prepare Codex context:
 
 ```bash
-npm run eng -- prepare codex
+npm run bakeflow -- prepare codex
 ```
 
 Install project-local Codex native skills:
 
 ```bash
-npm run eng -- prepare codex --install-skills
+npm run bakeflow -- prepare codex --install-skills
 ```
 
 Check the setup:
 
 ```bash
-npm run eng -- doctor
+npm run bakeflow -- doctor
 ```
 
 Expected healthy doctor result:
@@ -135,11 +135,11 @@ context:
 From this repository, run against the target project:
 
 ```bash
-npm run eng -- --project /path/to/project init --discover
-npm run eng -- --project /path/to/project sync
-npm run eng -- --project /path/to/project prepare codex
-npm run eng -- --project /path/to/project prepare codex --install-skills
-npm run eng -- --project /path/to/project doctor
+npm run bakeflow -- --project /path/to/project init --discover
+npm run bakeflow -- --project /path/to/project sync
+npm run bakeflow -- --project /path/to/project prepare codex
+npm run bakeflow -- --project /path/to/project prepare codex --install-skills
+npm run bakeflow -- --project /path/to/project doctor
 ```
 
 Or run the CLI file directly from the target project:
@@ -157,14 +157,14 @@ node /Users/ibowon/workspace/engineering-skills/src/cli.js doctor
 Before asking Codex to work on a target project, run:
 
 ```bash
-npm run eng -- --project /path/to/project sync
-npm run eng -- --project /path/to/project prepare codex
+npm run bakeflow -- --project /path/to/project sync
+npm run bakeflow -- --project /path/to/project prepare codex
 ```
 
 If you want Codex to discover the skills as project-local native skills, run:
 
 ```bash
-npm run eng -- --project /path/to/project prepare codex --install-skills
+npm run bakeflow -- --project /path/to/project prepare codex --install-skills
 ```
 
 Then instruct Codex:
@@ -182,42 +182,42 @@ Codex should use:
 
 ## Command Reference
 
-### `eng init --discover`
+### `bakeflow init --discover`
 
 Reads the project structure and reports observed paths, discovered skills, and unknown context. It does not write files.
 
 ```bash
-npm run eng -- init --discover
+npm run bakeflow -- init --discover
 ```
 
-### `eng sync`
+### `bakeflow sync`
 
 Reads `engineering.yaml`, validates declared skills, and copies them into the shared cache.
 
 ```bash
-npm run eng -- sync
+npm run bakeflow -- sync
 ```
 
-### `eng prepare codex`
+### `bakeflow prepare codex`
 
 Links cached skills into `.engineering/generated/skills` and creates `.engineering/generated/context.md`.
 
 ```bash
-npm run eng -- prepare codex
+npm run bakeflow -- prepare codex
 ```
 
 With `--install-skills`, it also copies skills into project-local `.codex/skills`.
 
 ```bash
-npm run eng -- prepare codex --install-skills
+npm run bakeflow -- prepare codex --install-skills
 ```
 
-### `eng doctor`
+### `bakeflow doctor`
 
 Checks manifest validity, skill metadata, cache state, generated context, generated skill links, and project context paths.
 
 ```bash
-npm run eng -- doctor
+npm run bakeflow -- doctor
 ```
 
 ## Current Limits
@@ -225,8 +225,8 @@ npm run eng -- doctor
 The v0.1 CLI supports only:
 
 - local registry: `registry.type: local`
-- Codex adapter: `eng prepare codex`
-- project-local Codex skill install: `eng prepare codex --install-skills`
+- Codex adapter: `bakeflow prepare codex`
+- project-local Codex skill install: `bakeflow prepare codex --install-skills`
 - explicit manifest skills
 
 Not yet implemented:
@@ -235,6 +235,6 @@ Not yet implemented:
 - `engineering.lock`
 - composite skill resolution
 - project extensions under `.engineering/overrides`
-- interactive `eng init --configure`
-- `eng apply`
+- interactive `bakeflow init --configure`
+- `bakeflow apply`
 - adapters for Claude, OMC, and OMX

@@ -9,10 +9,10 @@ import { formatDoctor, runDoctor } from './doctor.js';
 
 function usage() {
   return `Usage:
-  eng sync
-  eng init --discover
-  eng prepare codex [--install-skills]
-  eng doctor
+  bakeflow sync
+  bakeflow init --discover
+  bakeflow prepare codex [--install-skills]
+  bakeflow doctor
 
 Options:
   --project <path>  Project root (default: current directory)
@@ -96,6 +96,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(`eng: ${error.message}`);
+  console.error(`bakeflow: ${error.message}`);
   process.exitCode = 1;
 });

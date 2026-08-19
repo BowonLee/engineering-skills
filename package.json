@@ -1,5 +1,5 @@
 {
-  "name": "@bowonlee/engineering-skills",
+  "name": "@bakerleebb/bakeflow",
   "version": "0.1.0",
   "description": "Reusable engineering skills resolver and agent context CLI.",
   "type": "module",
@@ -22,11 +22,11 @@
     "context"
   ],
   "bin": {
-    "eng": "src/cli.js"
+    "bakeflow": "src/cli.js"
   },
   "scripts": {
     "test": "node --test",
-    "eng": "node ./src/cli.js",
+    "bakeflow": "node ./src/cli.js",
     "prepublishOnly": "npm test && npm run pack:check",
     "pack:check": "npm pack --dry-run"
   },

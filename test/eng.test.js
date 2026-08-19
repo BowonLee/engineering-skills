@@ -119,7 +119,7 @@ test('prepare reports a clear error when sync has not run', async () => {
   const manifest = await readManifest(tmp);
   await assert.rejects(
     () => prepareCodex(tmp, manifest, { env }),
-    /Run `eng sync` first/,
+    /Run `bakeflow sync` first/,
   );
 });
 
@@ -244,7 +244,7 @@ test('doctor reports cache and generated state', async () => {
 
   doctor = await runDoctor(tmp, { env });
   output = formatDoctor(doctor);
-  assert.match(output, /Engineering Skills Doctor/);
+  assert.match(output, /Bakeflow Doctor/);
   assert.match(output, /Results: \d+ passed, 0 warnings, 0 failed/);
 });
 
@@ -282,7 +282,7 @@ test('CLI supports doctor', async () => {
   await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'prepare', 'codex'], { env });
   const result = await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'doctor'], { env });
 
-  assert.match(result.stdout, /Engineering Skills Doctor/);
+  assert.match(result.stdout, /Bakeflow Doctor/);
   assert.match(result.stdout, /0 warnings, 0 failed/);
 });
 
@@ -292,15 +292,15 @@ test('usage documentation is included in the project', async () => {
   const packageJson = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
 
   assert.match(readme, /docs\/USAGE\.md/);
-  assert.match(readme, /npm install -g @bowonlee\/engineering-skills/);
-  assert.match(usage, /eng init --discover/);
-  assert.match(usage, /eng sync/);
-  assert.match(usage, /eng prepare codex/);
-  assert.match(usage, /eng prepare codex --install-skills/);
-  assert.match(usage, /eng doctor/);
+  assert.match(readme, /npm install -g @bakerleebb\/bakeflow/);
+  assert.match(usage, /bakeflow init --discover/);
+  assert.match(usage, /bakeflow sync/);
+  assert.match(usage, /bakeflow prepare codex/);
+  assert.match(usage, /bakeflow prepare codex --install-skills/);
+  assert.match(usage, /bakeflow doctor/);
   assert.match(usage, /Use From Another Project/);
   assert.match(usage, /Codex Workflow/);
-  assert.equal(packageJson.name, '@bowonlee/engineering-skills');
-  assert.equal(packageJson.bin.eng, 'src/cli.js');
+  assert.equal(packageJson.name, '@bakerleebb/bakeflow');
+  assert.equal(packageJson.bin.bakeflow, 'src/cli.js');
   assert.equal(packageJson.publishConfig.access, 'public');
 });
