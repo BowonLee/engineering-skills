@@ -13,6 +13,7 @@ Implemented:
 - `engineering.yaml` manifest
 - Local skill registry under `skills/`
 - Shared cache under `${ENGINEERING_HOME:-~/.engineering}/cache`
+- One-command npx setup with `bakeflow setup --codex`
 - Read-only repository discovery with `bakeflow init --discover`
 - `bakeflow sync`
 - `bakeflow prepare codex`
@@ -36,6 +37,12 @@ Install as a global CLI package:
 ```bash
 npm install -g @bakerleebb/bakeflow
 bakeflow --help
+```
+
+Run directly with npx in any project:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --codex
 ```
 
 Install directly from GitHub:
@@ -86,6 +93,12 @@ context:
 ```
 
 ## Commands
+
+Set up a project for Codex in one command:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --codex
+```
 
 Inspect the current project without changing files:
 

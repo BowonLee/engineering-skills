@@ -10,6 +10,7 @@ import { syncSkills } from '../src/cache.js';
 import { discoverProject, formatDiscovery } from '../src/discover.js';
 import { formatDoctor, runDoctor } from '../src/doctor.js';
 import { prepareCodex } from '../src/prepare.js';
+import { setupProject } from '../src/setup.js';
 
 const root = path.resolve('.');
 const execFileAsync = promisify(execFile);
@@ -104,6 +105,32 @@ test('CLI supports prepare codex --install-skills', async () => {
 
   assert.match(result.stdout, /installed codex skills:/);
   await fs.access(path.join(tmp, '.codex', 'skills', 'implementation-guidelines', 'SKILL.md'));
+});
+
+test('setup bootstraps an empty project for npx-style usage', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'bakeflow-setup-'));
+
+  const env = { ...process.env };
+  delete env.ENGINEERING_HOME;
+  const result = await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'setup', '--codex'], { env });
+
+  assert.match(result.stdout, /Bakeflow Setup/);
+  assert.match(result.stdout, /created manifest:/);
+  assert.match(result.stdout, /Results: \d+ passed, 0 warnings, 0 failed/);
+  await fs.access(path.join(tmp, 'engineering.yaml'));
+  await fs.access(path.join(tmp, '.engineering', 'registry', 'skills', 'implementation-guidelines', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.engineering', 'cache', 'implementation-guidelines', '0.1.0', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.engineering', 'generated', 'context.md'));
+  await fs.access(path.join(tmp, '.codex', 'skills', 'code-review', 'skill.yaml'));
+});
+
+test('setupProject reports healthy doctor state', async () => {
+  const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'bakeflow-setup-'));
+  const result = await setupProject(tmp, { env: {} });
+
+  assert.equal(result.bootstrap.created, true);
+  assert.equal(result.engineeringHome, path.join(tmp, '.engineering'));
+  assert.equal(result.doctor.checks.some((check) => check.status === 'fail'), false);
 });
 
 test('prepare reports a clear error when sync has not run', async () => {
@@ -294,6 +321,7 @@ test('usage documentation is included in the project', async () => {
   assert.match(readme, /docs\/USAGE\.md/);
   assert.match(readme, /npm install -g @bakerleebb\/bakeflow/);
   assert.match(usage, /bakeflow init --discover/);
+  assert.match(usage, /bakeflow setup --codex/);
   assert.match(usage, /bakeflow sync/);
   assert.match(usage, /bakeflow prepare codex/);
   assert.match(usage, /bakeflow prepare codex --install-skills/);

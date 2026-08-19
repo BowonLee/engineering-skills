@@ -38,6 +38,39 @@ Generated project files are written under:
 
 Generated files are intentionally ignored by Git.
 
+## One-Command npx Setup
+
+From any project root, run:
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --codex
+```
+
+This command:
+
+- creates `engineering.yaml` if it does not already exist
+- copies the bundled skill registry into `.engineering/registry`
+- uses `.engineering/cache` as the project-local cache
+- runs `bakeflow sync`
+- runs `bakeflow prepare codex --install-skills`
+- runs `bakeflow doctor`
+- updates `.gitignore` with generated/cache paths
+
+The generated project files are:
+
+```text
+.engineering/
+├── cache/
+├── generated/
+│   ├── context.md
+│   └── skills/
+└── registry/
+    └── skills/
+
+.codex/
+└── skills/
+```
+
 ## Use This Repository
 
 Install as a global CLI package:
@@ -56,6 +89,7 @@ After a global install, use:
 
 ```bash
 bakeflow --help
+bakeflow setup --codex
 bakeflow init --discover
 bakeflow sync
 bakeflow prepare codex
@@ -181,6 +215,16 @@ Codex should use:
 - the project context paths declared in `engineering.yaml`
 
 ## Command Reference
+
+### `bakeflow setup --codex`
+
+Bootstraps and verifies a project for Codex in one command.
+
+```bash
+npx --yes @bakerleebb/bakeflow setup --codex
+```
+
+If `engineering.yaml` is missing, Bakeflow creates a default manifest and project-local skill registry under `.engineering/registry`. If the manifest already exists, Bakeflow uses it as-is.
 
 ### `bakeflow init --discover`
 

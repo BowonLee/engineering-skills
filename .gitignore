@@ -1,3 +1,5 @@
+.engineering/cache/
+.engineering/registry/
 .engineering/generated/
 .omx/
 .codex/skills/

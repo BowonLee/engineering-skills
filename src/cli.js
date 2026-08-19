@@ -6,10 +6,12 @@ import { syncSkills } from './cache.js';
 import { prepareCodex } from './prepare.js';
 import { discoverProject, formatDiscovery } from './discover.js';
 import { formatDoctor, runDoctor } from './doctor.js';
+import { formatSetup, setupProject } from './setup.js';
 
 function usage() {
   return `Usage:
   bakeflow sync
+  bakeflow setup [--codex]
   bakeflow init --discover
   bakeflow prepare codex [--install-skills]
   bakeflow doctor
@@ -54,6 +56,18 @@ async function main() {
   }
 
   const [command, target] = positionals;
+
+  if (command === 'setup') {
+    if (target && target !== 'codex') {
+      throw new Error(`Unknown setup target: ${target}`);
+    }
+    const result = await setupProject(projectRoot, { codex: target === 'codex' || flags.has('--codex') || !target });
+    console.log(formatSetup(result));
+    if (result.doctor.checks.some((check) => check.status === 'fail')) {
+      process.exitCode = 1;
+    }
+    return;
+  }
 
   if (command === 'init' && (target === '--discover' || flags.has('--discover'))) {
     const discovery = await discoverProject(projectRoot);

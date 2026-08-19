@@ -1,6 +1,6 @@
 {
   "name": "@bakerleebb/bakeflow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Reusable engineering skills resolver and agent context CLI.",
   "type": "module",
   "license": "MIT",
