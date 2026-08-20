@@ -53,6 +53,7 @@ async function writeDefaultManifest(projectRoot) {
   await ensureDir(path.join(projectRoot, 'docs', 'architecture'));
   await ensureDir(path.join(projectRoot, 'docs', 'adr'));
   await ensureDir(path.join(projectRoot, 'docs', 'design-system'));
+  await ensureDir(path.join(projectRoot, 'docs', 'specs'));
 
   const manifest = [
     'version: 1',
@@ -64,11 +65,15 @@ async function writeDefaultManifest(projectRoot) {
     'skills:',
     '  implementation-guidelines: 0.1.0',
     '  code-review: 0.1.0',
+    '  documentation-consistency: 0.1.0',
+    '  architecture-drift-review: 0.1.0',
+    '  spec-to-implementation-review: 0.1.0',
     '',
     'context:',
     '  architecture: ./docs/architecture',
     '  adr: ./docs/adr',
     '  design_system: ./docs/design-system',
+    '  specs: ./docs/specs',
     '',
   ].join('\n');
 

@@ -35,6 +35,7 @@ export async function discoverProject(projectRoot) {
   const architecturePath = await firstExisting(projectRoot, ['docs/architecture', 'documentation/architecture']);
   const adrPath = await firstExisting(projectRoot, ['docs/adr', 'docs/adrs', 'documentation/adr']);
   const designSystemPath = await firstExisting(projectRoot, ['docs/design-system', 'docs/design_system', 'documentation/design-system']);
+  const specsPath = await firstExisting(projectRoot, ['docs/specs', 'docs/specifications', 'documentation/specs']);
   const skillNames = await listDirectoryNames(projectRoot, 'skills');
 
   const observed = [];
@@ -44,6 +45,7 @@ export async function discoverProject(projectRoot) {
     ['context.architecture', architecturePath],
     ['context.adr', adrPath],
     ['context.design_system', designSystemPath],
+    ['context.specs', specsPath],
   ]) {
     if (value) observed.push({ key: label, path: value, confidence: 'high', status: 'observed' });
   }
@@ -54,6 +56,7 @@ export async function discoverProject(projectRoot) {
   if (!architecturePath) unknown.push('context.architecture');
   if (!adrPath) unknown.push('context.adr');
   if (!designSystemPath) unknown.push('context.design_system');
+  if (!specsPath) unknown.push('context.specs');
 
   return {
     projectRoot,

@@ -20,6 +20,8 @@ engineering.yaml
 
 `engineering.yaml` is the project manifest. It declares which shared skills the project uses and where project-specific context lives.
 
+Bakeflow is meant to keep engineering review structure consistent without forcing every project to be identical. Shared skills provide the reusable abstraction; project docs and local skills carry project-specific detail.
+
 The CLI cache defaults to the current project's `.engineering/cache`:
 
 ```text
@@ -53,6 +55,7 @@ This command:
 - creates `engineering.yaml` if it does not already exist
 - copies the bundled skill registry into `.engineering/registry`
 - uses `.engineering/cache` as the project-local cache
+- creates `docs/architecture`, `docs/adr`, `docs/design-system`, and `docs/specs`
 - runs `bakeflow sync`
 - runs `bakeflow prepare codex --install-skills`
 - runs `bakeflow doctor`
@@ -171,6 +174,18 @@ Run tests:
 npm test
 npm run pack:check
 ```
+
+## Bundled Skills
+
+```text
+implementation-guidelines       implementation direction, architecture, verification
+code-review                     review against behavior, architecture, docs, tests
+documentation-consistency       documentation and implementation alignment
+architecture-drift-review       architecture drift and boundary review
+spec-to-implementation-review   spec, test, and implementation alignment
+```
+
+Project-specific rules should live first in the adopting project's context docs or local skills. Promote only repeated, generalized rules back into shared skills.
 
 ## Published Package Check
 

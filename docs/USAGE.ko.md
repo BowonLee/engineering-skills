@@ -19,6 +19,8 @@ engineering.yaml
 
 `engineering.yaml`은 프로젝트 manifest입니다. 어떤 스킬을 사용할지, 프로젝트 문서가 어디에 있는지 선언합니다.
 
+Bakeflow의 목적은 모든 프로젝트를 동일하게 만드는 것이 아니라, 공통적으로 반복되는 엔지니어링 검토 구조를 제공하고 프로젝트별 세부 규칙은 각 프로젝트의 문서와 스킬에서 발전시키는 것입니다.
+
 ## npx 한 줄 설정
 
 Codex용:
@@ -44,6 +46,7 @@ npx --yes @bakerleebb/bakeflow setup all
 - `engineering.yaml`이 없으면 생성
 - `.engineering/registry`에 기본 스킬 복사
 - `.engineering/cache`를 프로젝트 로컬 캐시로 사용
+- `docs/architecture`, `docs/adr`, `docs/design-system`, `docs/specs` 생성
 - 스킬 동기화
 - Codex 또는 Claude Code용 산출물 생성
 - `bakeflow doctor` 실행
@@ -106,6 +109,18 @@ bakeflow prepare codex --install-skills
 bakeflow prepare claude
 bakeflow doctor
 ```
+
+## 기본 스킬과 적용 대상
+
+```text
+implementation-guidelines       구현 방향, 아키텍처, 검증 기준
+code-review                     코드 리뷰 기준
+documentation-consistency       문서와 구현의 일치성
+architecture-drift-review       아키텍처 drift 검토
+spec-to-implementation-review   스펙, 테스트, 구현의 일치성
+```
+
+프로젝트별로 다른 세부 규칙은 `docs/architecture`, `docs/adr`, `docs/design-system`, `docs/specs`에 기록합니다. 여러 프로젝트에서 반복 검증된 규칙만 공통 스킬로 승격하는 것이 권장 흐름입니다.
 
 ## 패키지 확인
 

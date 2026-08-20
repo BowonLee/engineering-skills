@@ -4,7 +4,9 @@ Reusable engineering skill baking and context management for AI coding agents.
 
 English | [한국어](README.ko.md)
 
-Bakeflow is a manifest-driven CLI for packaging reusable engineering skills and preparing agent-readable project context. It installs shared skills into project-local locations for Codex and Claude Code, then verifies the result with `bakeflow doctor`.
+Bakeflow is a manifest-driven CLI for managing shared engineering direction across different languages, frameworks, and product surfaces. It packages reusable skills for implementation, review, architecture drift, documentation consistency, and spec-to-implementation alignment, then prepares agent-readable project context for Codex and Claude Code.
+
+"Consistent" does not mean "identical." Bakeflow provides abstract shared skill structure; each adopting project applies and evolves those skills against its own architecture, ADRs, design system, and feature specs.
 
 For practical setup and day-to-day usage, read [docs/USAGE.md](docs/USAGE.md). Korean usage documentation is available at [docs/USAGE.ko.md](docs/USAGE.ko.md).
 
@@ -51,6 +53,7 @@ Implemented:
 - `bakeflow doctor`
 - Codex context index at `.engineering/generated/context.md`
 - Claude context index at `.engineering/generated/claude-context.md`
+- Default cross-project skills for implementation, review, documentation consistency, architecture drift, and spec-to-implementation review
 
 Deferred:
 
@@ -122,7 +125,28 @@ context:
   architecture: ./docs/architecture
   adr: ./docs/adr
   design_system: ./docs/design-system
+  specs: ./docs/specs
 ```
+
+## Default Skills
+
+Bakeflow's bundled skills target engineering concerns that appear across many projects:
+
+- `implementation-guidelines`: implement changes while respecting architecture, ADRs, and verification expectations.
+- `code-review`: review changes against architecture, documentation, tests, and behavioral risk.
+- `documentation-consistency`: keep docs, ADRs, design-system notes, and behavior aligned.
+- `architecture-drift-review`: detect drift from documented architecture, dependency direction, and ownership boundaries.
+- `spec-to-implementation-review`: compare specs, acceptance criteria, tests, and implementation behavior.
+
+## Project Evolution Model
+
+Adopting projects receive a project-local registry under `.engineering/registry/skills`. Treat it as a starting point:
+
+1. Apply the bundled common skills.
+2. Fill project context under `docs/architecture`, `docs/adr`, `docs/design-system`, and `docs/specs`.
+3. Record project-specific rules locally first.
+4. Promote only repeated, generalized rules back into shared skills.
+5. Keep non-general rules in project context.
 
 ## Commands
 

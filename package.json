@@ -1,7 +1,7 @@
 {
   "name": "@bakerleebb/bakeflow",
-  "version": "0.1.4",
-  "description": "Reusable engineering skills resolver and agent context CLI for Codex and Claude Code.",
+  "version": "0.1.5",
+  "description": "Reusable engineering skills for consistent architecture, documentation, review, and agent context across projects.",
   "type": "module",
   "license": "MIT",
   "author": "Bowon Lee <asdfg3678@gmail.com>",

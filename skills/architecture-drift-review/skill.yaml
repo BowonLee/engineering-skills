@@ -1,0 +1,17 @@
+name: architecture-drift-review
+version: 0.1.0
+
+description: >
+  Review whether implementation changes introduce drift from documented
+  architecture, dependency direction, ownership boundaries, or design-system usage.
+
+tags:
+  - architecture
+  - review
+  - drift
+
+project_context:
+  recommended:
+    - architecture
+    - adr
+    - design_system

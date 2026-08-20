@@ -7,8 +7,12 @@ registry:
 skills:
   implementation-guidelines: 0.1.0
   code-review: 0.1.0
+  documentation-consistency: 0.1.0
+  architecture-drift-review: 0.1.0
+  spec-to-implementation-review: 0.1.0
 
 context:
   architecture: ./docs/architecture
   adr: ./docs/adr
   design_system: ./docs/design-system
+  specs: ./docs/specs

@@ -19,9 +19,46 @@
 
 - 공통 Skill은 특정 프로그래밍 언어, UI Framework, Backend Framework에 종속되지 않는다.
 - 언어/Framework별 규칙이 필요하다면 별도의 선택적 확장 Skill로 분리한다.
+- "균일함"은 동일한 구현 규칙을 강제한다는 뜻이 아니라, 여러 프로젝트에서 반복되는 검토 구조와 판단 순서를 공통화한다는 뜻이다.
+- 프로젝트별 세부 규칙은 프로젝트의 architecture, ADR, design-system, specs 문서에서 발전시키고, 여러 프로젝트에서 반복 검증된 규칙만 공통 Skill로 승격한다.
 
-> 공통 Engineering Knowledge는 프로젝트 내부에 복사하지 않는다.  
-> 프로젝트는 어떤 Skill을 사용할지만 선언하고, Resolver가 실행 시점에 필요한 Skill을 연결한다.
+> 공통 Engineering Knowledge의 원형은 패키지/저장소에서 관리한다.  
+> 적용 프로젝트는 어떤 Skill을 사용할지 선언하고, Bakeflow가 프로젝트 로컬 registry/cache/generated 영역에 실행 가능한 사본과 인덱스를 준비한다.  
+> 프로젝트에서 수정해야 하는 것은 generated 산출물이 아니라 프로젝트 컨텍스트 문서와 프로젝트 고유 Skill/Extension이다.
+
+## 1.1 현재 구현 기준
+
+현재 구현체의 이름은 `bakeflow`이며 npm 패키지 `@bakerleebb/bakeflow`로 배포한다.
+
+구현된 실행 모델:
+
+```text
+npx @bakerleebb/bakeflow setup all
+        ↓
+engineering.yaml 생성 또는 사용
+        ↓
+.engineering/registry/skills 에 기본 Skill 복사
+        ↓
+.engineering/cache 에 선언된 Skill 동기화
+        ↓
+.engineering/generated 에 Agent Context Index 생성
+        ↓
+.codex/skills 또는 .claude/skills 에 Agent별 Skill 설치
+        ↓
+bakeflow doctor 로 검증
+```
+
+현재 기본 Skill:
+
+```text
+implementation-guidelines
+code-review
+documentation-consistency
+architecture-drift-review
+spec-to-implementation-review
+```
+
+이 다섯 Skill은 특정 언어/프레임워크 지식이 아니라 구현 방향, 리뷰, 문서 일치성, 아키텍처 drift, 스펙-구현 정합성처럼 대부분의 개발 프로젝트에서 반복되는 관리 구조를 다룬다.
 
 ---
 
@@ -36,7 +73,7 @@
 2. engineering.yaml
    프로젝트가 사용할 Skill을 선언하는 Manifest
 
-3. eng CLI / Resolver
+3. bakeflow CLI / Resolver
    Manifest와 Skill 저장소를 연결하고 Agent 실행환경에 노출
 ```
 
@@ -45,8 +82,8 @@ npm 생태계에 비유하면 다음과 같다.
 | 일반 개발 생태계 | Engineering Skills |
 |---|---|
 | npm registry | engineering-skills |
-| npm / pnpm | eng CLI / Resolver |
-| package cache | ~/.engineering/cache |
+| npm / pnpm / npx | bakeflow CLI / Resolver |
+| package cache | .engineering/cache |
 | application | 실제 개발 프로젝트 |
 
 ---
@@ -153,18 +190,6 @@ engineering-skills/
 ├── README.md
 │
 ├── skills/
-│   ├── figma-to-code/
-│   │   ├── skill.yaml
-│   │   ├── SKILL.md
-│   │   └── references/
-│   │       ├── component-mapping.md
-│   │       └── visual-validation.md
-│   │
-│   ├── architecture-design/
-│   │   ├── skill.yaml
-│   │   ├── SKILL.md
-│   │   └── references/
-│   │
 │   ├── implementation-guidelines/
 │   │   ├── skill.yaml
 │   │   └── SKILL.md
@@ -173,31 +198,33 @@ engineering-skills/
 │       ├── skill.yaml
 │       └── SKILL.md
 │
-├── standards/
-│   ├── architecture/
-│   ├── design-system/
-│   ├── application/
-│   └── documentation/
+│   ├── documentation-consistency/
+│   │   ├── skill.yaml
+│   │   └── SKILL.md
+│   │
+│   ├── architecture-drift-review/
+│   │   ├── skill.yaml
+│   │   └── SKILL.md
+│   │
+│   └── spec-to-implementation-review/
+│       ├── skill.yaml
+│       └── SKILL.md
 │
-├── templates/
-│   ├── ADR.md
-│   ├── SYSTEM_DESIGN.md
-│   └── FEATURE_SPEC.md
-│
-├── cli/
-│   ├── cli/
-│   ├── manifest/
-│   ├── resolver/
-│   ├── registry/
-│   ├── cache/
-│   └── adapters/
+├── src/
+│   ├── cli.js
+│   ├── setup.js
+│   ├── cache.js
+│   ├── prepare.js
+│   ├── claude.js
+│   ├── doctor.js
+│   └── discover.js
 │
 └── schemas/
     ├── engineering.schema.json
     └── skill.schema.json
 ```
 
-초기 버전에서는 `standards`, `templates`, `schemas` 일부를 생략해도 된다.
+`standards`, `templates`, 원격 registry, lockfile은 이후 확장 지점이다. 현재 MVP는 npm으로 배포되는 CLI와 패키지 내 `skills/`를 프로젝트 로컬 registry로 복사하는 방식을 사용한다.
 
 ---
 
@@ -306,7 +333,8 @@ my-project/
 ├── docs/
 │   ├── architecture/
 │   ├── adr/
-│   └── design-system/
+│   ├── design-system/
+│   └── specs/
 │
 ├── lib/
 └── ...
@@ -324,19 +352,21 @@ my-project/
 version: 1
 
 registry:
-  type: git
-  url: git@github.com:company/engineering-skills.git
+  type: local
+  path: ./.engineering/registry
 
 skills:
-  figma-to-code: 0.1.0
-  architecture-design: 0.1.0
   implementation-guidelines: 0.1.0
   code-review: 0.1.0
+  documentation-consistency: 0.1.0
+  architecture-drift-review: 0.1.0
+  spec-to-implementation-review: 0.1.0
 
 context:
   architecture: ./docs/architecture
   adr: ./docs/adr
   design_system: ./docs/design-system
+  specs: ./docs/specs
 ```
 
 이 파일의 의미는 다음과 같다.
@@ -344,15 +374,18 @@ context:
 ```text
 이 프로젝트에서는
 
-figma-to-code
-architecture-design
 implementation-guidelines
 code-review
+documentation-consistency
+architecture-drift-review
+spec-to-implementation-review
 
 Skill을 사용한다.
 
 프로젝트 고유 Architecture는
 ./docs/architecture 에 있다.
+프로젝트 고유 Feature Spec은
+./docs/specs 에 있다.
 ```
 
 ---
@@ -378,6 +411,10 @@ adr/
 design-system/
   tokens.md
   components.md
+
+specs/
+  feature-a.md
+  payment-flow.md
 ```
 
 예를 들어:
@@ -404,9 +441,9 @@ Raw spacing values should not be introduced without justification.
 
 ---
 
-# 10. eng CLI 역할
+# 10. bakeflow CLI 역할
 
-`eng` CLI는 Agent Framework가 아니다.
+`bakeflow` CLI는 Agent Framework가 아니다.
 
 주요 역할은 다음과 같다.
 
@@ -424,25 +461,29 @@ Agent Adapter
 Codex / Claude / OMC / OMX
 ```
 
-초기 CLI는 다음 네 명령을 목표로 한다.
+현재 CLI는 다음 명령을 제공한다.
 
 ```bash
-eng init
-eng sync
-eng prepare
-eng doctor
+bakeflow setup --codex
+bakeflow setup --claude
+bakeflow setup all
+bakeflow init --discover
+bakeflow sync
+bakeflow prepare codex --install-skills
+bakeflow prepare claude
+bakeflow doctor
 ```
 
-MVP에서는 `sync`, `prepare`만 먼저 구현해도 된다.
+MVP에서 원격 registry와 interactive configure/apply는 의도적으로 제외한다.
 
 ---
 
-# 11. eng sync
+# 11. bakeflow sync
 
-`eng sync`는 `engineering.yaml`에 선언된 Skill을 가져온다.
+`bakeflow sync`는 `engineering.yaml`에 선언된 Skill을 프로젝트 cache로 가져온다.
 
 ```bash
-eng sync
+bakeflow sync
 ```
 
 처리 과정:
@@ -454,7 +495,7 @@ engineering.yaml 읽기
         ↓
 Local Cache 확인
         ↓
-없는 Skill 다운로드
+프로젝트 로컬 registry에서 Skill 복사
         ↓
 Cache 저장
 ```
@@ -462,31 +503,29 @@ Cache 저장
 Local Cache 예:
 
 ```text
-~/.engineering/
+.engineering/
 
 cache/
-├── figma-to-code/
+├── implementation-guidelines/
 │   └── 0.1.0/
-│
-├── architecture-design/
+├── documentation-consistency/
 │   └── 0.1.0/
-│
-└── implementation-guidelines/
+└── spec-to-implementation-review/
     └── 0.1.0/
 ```
 
-같은 Skill 버전을 여러 프로젝트가 사용할 경우 하나의 Cache를 공유한다.
+기본 동작은 프로젝트 내부 `.engineering/cache`를 사용한다. `ENGINEERING_HOME`을 지정하면 다른 cache 위치를 사용할 수 있지만, npx 기반 적용에서는 프로젝트 로컬 cache가 기본이다.
 
 ---
 
-# 12. eng prepare
+# 12. bakeflow prepare
 
-`eng prepare`는 현재 프로젝트에서 Agent가 Skill을 참조할 수 있도록 환경을 준비한다.
+`bakeflow prepare`는 현재 프로젝트에서 Agent가 Skill을 참조할 수 있도록 환경을 준비한다.
 
 예:
 
 ```bash
-eng prepare codex
+bakeflow prepare codex --install-skills
 ```
 
 개념적인 결과:
@@ -510,8 +549,8 @@ Project
 .engineering/
 └── generated/
     ├── skills/
-    │   ├── figma-to-code
-    │   └── implementation-guidelines
+    │   ├── implementation-guidelines
+    │   └── documentation-consistency
     │
     └── context.md
 ```
@@ -519,9 +558,9 @@ Project
 Skill은 복사보다 Symlink를 우선 고려한다.
 
 ```text
-project/.engineering/generated/skills/figma-to-code
+project/.engineering/generated/skills/documentation-consistency
               ↓
-~/.engineering/cache/figma-to-code/0.1.0
+project/.engineering/cache/documentation-consistency/0.1.0
 ```
 
 생성 파일은 Git에 포함하지 않는다.
@@ -543,8 +582,10 @@ project/.engineering/generated/skills/figma-to-code
 
 ## Active Skills
 
-- figma-to-code@0.1.0
 - implementation-guidelines@0.1.0
+- documentation-consistency@0.1.0
+- architecture-drift-review@0.1.0
+- spec-to-implementation-review@0.1.0
 
 ## Project Architecture
 
@@ -1142,7 +1183,7 @@ Architecture Consistent
 
 ---
 
-# 25. Documentation Sync Skill
+# 25. Documentation Consistency Skill
 
 위 규칙은 독립적인 Skill로 관리할 수 있다.
 
@@ -1150,7 +1191,7 @@ Architecture Consistent
 
 ```text
 skills/
-└── documentation-sync/
+└── documentation-consistency/
     ├── skill.yaml
     ├── SKILL.md
     └── references/
@@ -1223,7 +1264,7 @@ Skill은 반드시 하나의 거대한 문서로 만들 필요가 없다.
 예:
 
 ```text
-documentation-sync
+documentation-consistency
 clean-architecture-docs
 architecture-decision
 figma-to-code
@@ -1248,7 +1289,7 @@ feature-development
 feature-development
 │
 ├── clean-architecture-docs
-├── documentation-sync
+├── documentation-consistency
 ├── architecture-decision
 ├── implementation
 └── code-review
@@ -1279,7 +1320,7 @@ implementation
 
       ↓
 
-documentation-sync
+documentation-consistency
       ↓
 코드와 docs 동기화
 
@@ -1308,7 +1349,7 @@ skills:
   - clean-architecture-docs
   - architecture-decision
   - implementation
-  - documentation-sync
+  - documentation-consistency
   - code-review
 ```
 
@@ -1330,7 +1371,7 @@ workflow:
   - skill: implementation
     phase: execute
 
-  - skill: documentation-sync
+  - skill: documentation-consistency
     phase: post
 
   - skill: code-review
@@ -1351,7 +1392,7 @@ MVP에서는 Composite Skill을 실제 Workflow Engine으로 구현하지 않아
 Atomic Skills
 
 clean-architecture-docs
-documentation-sync
+documentation-consistency
 architecture-decision
 figma-to-code
 code-review
@@ -1372,11 +1413,11 @@ figma-feature-implementation
 │
 ├── figma-to-code
 ├── clean-architecture-docs
-├── documentation-sync
+├── documentation-consistency
 └── code-review
 ```
 
-이 구조를 사용하면 동일한 `documentation-sync` Skill을 Figma 구현, 일반 Feature 개발, Architecture 변경 등 여러 Workflow에서 재사용할 수 있다.
+이 구조를 사용하면 동일한 `documentation-consistency` Skill을 Figma 구현, 일반 Feature 개발, Architecture 변경 등 여러 Workflow에서 재사용할 수 있다.
 
 ---
 
@@ -1405,7 +1446,7 @@ Resolver
        ↓
 clean-architecture-docs
 architecture-decision
-documentation-sync
+documentation-consistency
 code-review
 ```
 
@@ -1837,7 +1878,7 @@ feature-development
 ├── clean-architecture-docs
 ├── architecture-decision
 ├── implementation-guidelines
-├── documentation-sync
+├── documentation-consistency
 └── code-review
 ```
 
@@ -2071,7 +2112,7 @@ Core Docs 위치
 기존 문서 유지/이전 정책
 ```
 
-`documentation-sync`가 추가되면 다음을 추가 확인할 수 있다.
+`documentation-consistency`가 추가되면 다음을 추가 확인할 수 있다.
 
 ```text
 어떤 변경을 문서 변경으로 간주하는가?
@@ -2644,7 +2685,7 @@ engineering.yaml
 
 +
 
-eng CLI / Resolver
+bakeflow CLI / Resolver
   ├── sync
   └── prepare
 
@@ -2702,7 +2743,7 @@ v0.4
 추가 Agent Adapter
 
 v0.5
-eng doctor
+bakeflow doctor
 
 v0.6
 Skill Dependency
@@ -2735,7 +2776,7 @@ Profile 내부:
 skills:
   figma-to-code: 1.0.0
   implementation-guidelines: 1.2.0
-  architecture-design: 1.0.0
+  architecture-drift-review: 1.0.0
   code-review: 1.1.0
 ```
 
@@ -2758,13 +2799,13 @@ git clone project-a
 
 2. Skill 동기화
 
-eng sync
+bakeflow sync
 
         ↓
 
 3. Agent Context 준비
 
-eng prepare codex
+bakeflow prepare codex
 
         ↓
 
@@ -2804,25 +2845,23 @@ codex
 
 이 시스템을 구현할 때 다음 원칙을 유지한다.
 
-1. **프로젝트 초기화 시 Architecture를 임의로 추측하지 않고 Repository 분석 + Interview + 사용자 확인을 거친다.**
+1. **프로젝트 초기화 시 Architecture를 임의로 확정하지 않고 Repository 분석과 사용자 확인을 거친다.**
 2. **Skill은 프로젝트 전체에 일괄 적용하지 않고 단계 및 Feature 단위로 점진 적용할 수 있어야 한다.**
 3. **Discover / Configure / Apply를 분리하고 실제 변경 전 Preview를 제공한다.**
 4. **코드의 Core / Feature / Subdomain 구조와 docs 구조를 대응시킨다.**
-2. **Agent는 작업 전 관련 문서를 확인하고 작업 후 코드와 문서를 동기화한다.**
-3. **재사용 가능한 작은 Skill과 이를 조합하는 Composite Skill을 분리한다.**
-4. **중앙 Skill은 Base Skill로 추상화하고 프로젝트에서는 Configuration과 Extension으로 특화한다.**
-5. **Agent가 사용하는 최종 Skill은 Base Skill이 아니라 Resolver가 구성한 Effective Project Skill이다.**
-6. **프로젝트 고유 Extension은 Git으로 관리하고 Resolver 생성물은 Git에서 제외한다.**
-7. **Skill은 프로젝트에 복사하지 않는다.**
-8. **Skill은 특정 Agent Harness에 종속시키지 않는다.**
-9. **공통 방법론과 Project Context를 분리한다.**
-10. **Project는 사용할 Skill만 Manifest로 선언한다.**
+5. **Agent는 작업 전 관련 문서를 확인하고 작업 후 코드와 문서를 동기화한다.**
+6. **재사용 가능한 작은 Skill과 이를 조합하는 Composite Skill을 분리한다.**
+7. **중앙 Skill은 Base Skill로 추상화하고 프로젝트에서는 Configuration과 Extension으로 특화한다.**
+8. **프로젝트 고유 Extension은 Git으로 관리하고 Resolver 생성물은 Git에서 제외한다.**
+9. **공통 Skill 원형과 Project Context를 분리한다.**
+10. **Project는 사용할 Skill과 문서 위치를 Manifest로 선언한다.**
 11. **Resolver가 Skill, Project Configuration, Extension, Context를 연결한다.**
 12. **Agent별 차이는 Adapter에서 처리한다.**
 13. **Skill은 버전 관리한다.**
 14. **검증된 프로젝트 규칙만 공통 Skill로 승격한다.**
 15. **일반적인 프로그래밍 지식은 Skill로 만들지 않는다.**
 16. **MVP에서는 Registry Server나 Skill Router를 만들지 않는다.**
+17. **현재 npm/npx 배포 모델에서는 공통 Skill 원형을 패키지에서 관리하고, 적용 프로젝트에는 로컬 registry/cache/generated 산출물을 만든다.**
 
 ---
 
@@ -2831,29 +2870,31 @@ codex
 프로젝트 생성 후 다음 순서대로 진행한다.
 
 ```text
-[ ] engineering-skills Git Repository 생성
+[x] engineering-skills Git Repository 생성
 
-[ ] skills/ 디렉터리 생성
+[x] skills/ 디렉터리 생성
 
 [ ] clean-architecture-docs Skill 작성
 
-[ ] documentation-sync Skill 작성
+[x] documentation-consistency Skill 작성
 
 [ ] feature-development Composite Skill 작성
 
 [ ] figma-to-code Skill 작성
 
-[ ] architecture-design Skill 작성
+[x] architecture-drift-review Skill 작성
 
-[ ] implementation-guidelines Skill 작성
+[x] implementation-guidelines Skill 작성
 
-[ ] code-review Skill 작성
+[x] code-review Skill 작성
 
-[ ] engineering.yaml 규격 정의
+[x] spec-to-implementation-review Skill 작성
+
+[x] engineering.yaml 규격 정의
 
 [ ] Skill Initialization Contract 규격 정의
 
-[ ] Repository Discovery 구현
+[x] Repository Discovery 구현
 
 [ ] Interactive Initialization Interview 설계
 
@@ -2863,17 +2904,19 @@ codex
 
 [ ] Feature 단위 Adoption 상태 규격 정의
 
-[ ] CLI / Resolver 프로젝트 생성
+[x] bakeflow CLI / Resolver 프로젝트 생성
 
-[ ] YAML Parser 구현
+[x] YAML Parser 구현
 
-[ ] eng sync 구현
+[x] bakeflow sync 구현
 
-[ ] Local Cache 구현
+[x] Local Cache 구현
 
-[ ] eng prepare 구현
+[x] bakeflow prepare 구현
 
-[ ] 첫 Agent Adapter 구현
+[x] Codex Adapter 구현
+
+[x] Claude Code Adapter 구현
 
 [ ] 실제 Project A에 engineering.yaml 추가
 
