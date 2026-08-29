@@ -179,6 +179,7 @@ npm run pack:check
 
 ```text
 implementation-guidelines       implementation direction, architecture, verification
+clean-architecture-docs         Clean Architecture and code-to-docs structure mapping
 code-review                     review against behavior, architecture, docs, tests
 documentation-consistency       documentation and implementation alignment
 architecture-drift-review       architecture drift and boundary review
@@ -211,6 +212,7 @@ registry:
 
 skills:
   implementation-guidelines: 0.1.0
+  clean-architecture-docs: 0.1.0
   code-review: 0.1.0
 
 context:

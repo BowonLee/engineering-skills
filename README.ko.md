@@ -15,7 +15,7 @@ Bakeflow는 언어와 제품 방향이 서로 다른 프로젝트에서도 반�
 - Codex와 Claude Code가 읽을 수 있는 프로젝트 로컬 산출물을 생성합니다.
 - `bakeflow doctor`로 설정이 정상인지 검증합니다.
 
-자세한 사용법은 [docs/USAGE.ko.md](docs/USAGE.ko.md)를 보세요. 영어 문서는 [docs/USAGE.md](docs/USAGE.md)에 있습니다.
+자세한 사용법은 [docs/USAGE.ko.md](docs/USAGE.ko.md)를 보세요. 기본 스킬 설명은 [docs/SKILLS.ko.md](docs/SKILLS.ko.md)에 있습니다. 영어 문서는 [docs/USAGE.md](docs/USAGE.md)에 있습니다.
 
 ## 빠른 시작
 
@@ -69,6 +69,7 @@ Claude Code 설정은 다음을 만듭니다.
 Bakeflow의 기본 스킬은 특정 언어나 프레임워크가 아니라 대부분의 프로젝트에서 반복되는 엔지니어링 관리 문제를 다룹니다.
 
 - `implementation-guidelines`: 아키텍처, ADR, 검증 기대치를 지키며 구현합니다.
+- `clean-architecture-docs`: Clean Architecture 경계와 코드-문서 디렉토리 대응을 검증합니다.
 - `code-review`: 변경 사항을 아키텍처, 문서, 테스트 증거 기준으로 리뷰합니다.
 - `documentation-consistency`: 문서, ADR, 설계 노트, 구현이 서로 맞는지 확인합니다.
 - `architecture-drift-review`: 구현이 문서화된 아키텍처와 의존 방향에서 벗어났는지 검토합니다.

@@ -119,6 +119,7 @@ registry:
 
 skills:
   implementation-guidelines: 0.1.0
+  clean-architecture-docs: 0.1.0
   code-review: 0.1.0
 
 context:
@@ -133,6 +134,7 @@ context:
 Bakeflow's bundled skills target engineering concerns that appear across many projects:
 
 - `implementation-guidelines`: implement changes while respecting architecture, ADRs, and verification expectations.
+- `clean-architecture-docs`: verify Clean Architecture boundaries and code-to-docs directory mapping.
 - `code-review`: review changes against architecture, documentation, tests, and behavioral risk.
 - `documentation-consistency`: keep docs, ADRs, design-system notes, and behavior aligned.
 - `architecture-drift-review`: detect drift from documented architecture, dependency direction, and ownership boundaries.

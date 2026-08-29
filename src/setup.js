@@ -64,6 +64,7 @@ async function writeDefaultManifest(projectRoot) {
     '',
     'skills:',
     '  implementation-guidelines: 0.1.0',
+    '  clean-architecture-docs: 0.1.0',
     '  code-review: 0.1.0',
     '  documentation-consistency: 0.1.0',
     '  architecture-drift-review: 0.1.0',

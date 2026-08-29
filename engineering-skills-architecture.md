@@ -52,13 +52,14 @@ bakeflow doctor 로 검증
 
 ```text
 implementation-guidelines
+clean-architecture-docs
 code-review
 documentation-consistency
 architecture-drift-review
 spec-to-implementation-review
 ```
 
-이 다섯 Skill은 특정 언어/프레임워크 지식이 아니라 구현 방향, 리뷰, 문서 일치성, 아키텍처 drift, 스펙-구현 정합성처럼 대부분의 개발 프로젝트에서 반복되는 관리 구조를 다룬다.
+이 여섯 Skill은 특정 언어/프레임워크 지식이 아니라 구현 방향, Clean Architecture 문서 대응, 리뷰, 문서 일치성, 아키텍처 drift, 스펙-구현 정합성처럼 대부분의 개발 프로젝트에서 반복되는 관리 구조를 다룬다.
 
 ---
 
@@ -1220,7 +1221,7 @@ Feature/Core/Subdomain 구조 변경 감지
 
 # 26. Clean Architecture Documentation Skill
 
-Clean Architecture 자체와 문서 구조 대응을 별도 Skill로 분리할 수도 있다.
+Clean Architecture 자체와 문서 구조 대응은 `clean-architecture-docs` Skill로 분리해 관리한다.
 
 예:
 
@@ -2874,7 +2875,7 @@ codex
 
 [x] skills/ 디렉터리 생성
 
-[ ] clean-architecture-docs Skill 작성
+[x] clean-architecture-docs Skill 작성
 
 [x] documentation-consistency Skill 작성
 

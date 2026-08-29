@@ -114,6 +114,7 @@ bakeflow doctor
 
 ```text
 implementation-guidelines       구현 방향, 아키텍처, 검증 기준
+clean-architecture-docs         Clean Architecture와 코드-문서 구조 대응
 code-review                     코드 리뷰 기준
 documentation-consistency       문서와 구현의 일치성
 architecture-drift-review       아키텍처 drift 검토
@@ -121,6 +122,8 @@ spec-to-implementation-review   스펙, 테스트, 구현의 일치성
 ```
 
 프로젝트별로 다른 세부 규칙은 `docs/architecture`, `docs/adr`, `docs/design-system`, `docs/specs`에 기록합니다. 여러 프로젝트에서 반복 검증된 규칙만 공통 스킬로 승격하는 것이 권장 흐름입니다.
+
+각 스킬의 목적, 실행 흐름, 피해야 할 패턴은 [기본 스킬 문서](SKILLS.ko.md)에 정리되어 있습니다.
 
 ## 패키지 확인
 
