@@ -113,6 +113,10 @@ bakeflow doctor
 ## 기본 스킬과 적용 대상
 
 ```text
+feature-design                 기능 요청과 스펙을 구현 가능한 설계로 분해
+architecture-design            시스템, 모듈, 기능 아키텍처 설계
+adr-authoring                  아키텍처 결정 기록 작성
+system-diagram                 Mermaid/C4 스타일 구조 다이어그램
 implementation-guidelines       구현 방향, 아키텍처, 검증 기준
 clean-architecture-docs         Clean Architecture와 코드-문서 구조 대응
 code-review                     코드 리뷰 기준

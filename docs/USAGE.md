@@ -178,6 +178,10 @@ npm run pack:check
 ## Bundled Skills
 
 ```text
+feature-design                 implementation-ready feature design
+architecture-design            system, module, and feature architecture design
+adr-authoring                  architecture decision records
+system-diagram                 Mermaid/C4-style architecture diagrams
 implementation-guidelines       implementation direction, architecture, verification
 clean-architecture-docs         Clean Architecture and code-to-docs structure mapping
 code-review                     review against behavior, architecture, docs, tests
@@ -211,6 +215,10 @@ registry:
   path: /Users/ibowon/workspace/engineering-skills
 
 skills:
+  feature-design: 0.1.0
+  architecture-design: 0.1.0
+  adr-authoring: 0.1.0
+  system-diagram: 0.1.0
   implementation-guidelines: 0.1.0
   clean-architecture-docs: 0.1.0
   code-review: 0.1.0

@@ -118,6 +118,10 @@ registry:
   path: .
 
 skills:
+  feature-design: 0.1.0
+  architecture-design: 0.1.0
+  adr-authoring: 0.1.0
+  system-diagram: 0.1.0
   implementation-guidelines: 0.1.0
   clean-architecture-docs: 0.1.0
   code-review: 0.1.0
@@ -133,6 +137,10 @@ context:
 
 Bakeflow's bundled skills target engineering concerns that appear across many projects:
 
+- `feature-design`: turn requests and specs into implementation-ready feature design.
+- `architecture-design`: design system, module, or feature architecture through evidence-backed options.
+- `adr-authoring`: capture architecture decisions, alternatives, consequences, and verification.
+- `system-diagram`: express architecture and flows as Mermaid or C4-style diagrams.
 - `implementation-guidelines`: implement changes while respecting architecture, ADRs, and verification expectations.
 - `clean-architecture-docs`: verify Clean Architecture boundaries and code-to-docs directory mapping.
 - `code-review`: review changes against architecture, documentation, tests, and behavioral risk.

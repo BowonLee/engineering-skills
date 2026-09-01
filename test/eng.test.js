@@ -15,12 +15,16 @@ import { setupProject } from '../src/setup.js';
 const root = path.resolve('.');
 const execFileAsync = promisify(execFile);
 const defaultSkills = [
+  'adr-authoring',
+  'architecture-design',
   'architecture-drift-review',
   'clean-architecture-docs',
   'code-review',
   'documentation-consistency',
+  'feature-design',
   'implementation-guidelines',
   'spec-to-implementation-review',
+  'system-diagram',
 ];
 const fixtureFilter = (source) =>
   !source.includes(`${path.sep}node_modules${path.sep}`)
@@ -80,6 +84,10 @@ test('prepares a Codex context index with linked skills', async () => {
   const context = await fs.readFile(result.contextPath, 'utf8');
 
   assert.match(context, /# Effective Engineering Context/);
+  assert.match(context, /feature-design@0\.1\.0/);
+  assert.match(context, /architecture-design@0\.1\.0/);
+  assert.match(context, /adr-authoring@0\.1\.0/);
+  assert.match(context, /system-diagram@0\.1\.0/);
   assert.match(context, /implementation-guidelines@0\.1\.0/);
   assert.match(context, /clean-architecture-docs@0\.1\.0/);
   assert.match(context, /code-review@0\.1\.0/);
@@ -104,6 +112,8 @@ test('prepare can install project-local Codex skills', async () => {
   const result = await prepareCodex(tmp, manifest, { env, installSkills: true });
 
   assert.equal(result.installedSkills.length, defaultSkills.length);
+  await fs.access(path.join(tmp, '.codex', 'skills', 'feature-design', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.codex', 'skills', 'architecture-design', 'SKILL.md'));
   await fs.access(path.join(tmp, '.codex', 'skills', 'implementation-guidelines', 'SKILL.md'));
   await fs.access(path.join(tmp, '.codex', 'skills', 'clean-architecture-docs', 'SKILL.md'));
   await fs.access(path.join(tmp, '.codex', 'skills', 'code-review', 'skill.yaml'));
@@ -138,6 +148,8 @@ test('setup bootstraps an empty project for npx-style usage', async () => {
   assert.match(result.stdout, /created manifest:/);
   assert.match(result.stdout, /Results: \d+ passed, 0 warnings, 0 failed/);
   await fs.access(path.join(tmp, 'engineering.yaml'));
+  await fs.access(path.join(tmp, '.engineering', 'registry', 'skills', 'feature-design', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.engineering', 'registry', 'skills', 'architecture-design', 'SKILL.md'));
   await fs.access(path.join(tmp, '.engineering', 'registry', 'skills', 'implementation-guidelines', 'SKILL.md'));
   await fs.access(path.join(tmp, '.engineering', 'registry', 'skills', 'clean-architecture-docs', 'SKILL.md'));
   await fs.access(path.join(tmp, '.engineering', 'registry', 'skills', 'documentation-consistency', 'SKILL.md'));
@@ -162,6 +174,8 @@ test('setup can bootstrap Claude Code project skills', async () => {
   assert.match(claudeSkill, /description: Shared implementation principles/);
   await fs.access(path.join(tmp, '.engineering', 'generated', 'claude-context.md'));
   await fs.access(path.join(tmp, '.claude', 'CLAUDE.md'));
+  await fs.access(path.join(tmp, '.claude', 'skills', 'adr-authoring', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.claude', 'skills', 'system-diagram', 'SKILL.md'));
   await fs.access(path.join(tmp, '.claude', 'skills', 'clean-architecture-docs', 'SKILL.md'));
   await fs.access(path.join(tmp, '.claude', 'skills', 'spec-to-implementation-review', 'SKILL.md'));
 });
@@ -221,6 +235,10 @@ test('CLI supports --project for sync and prepare', async () => {
 
   const env = { ...process.env, ENGINEERING_HOME: cacheHome };
   const sync = await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'sync'], { env });
+  assert.match(sync.stdout, /added feature-design@0\.1\.0/);
+  assert.match(sync.stdout, /added architecture-design@0\.1\.0/);
+  assert.match(sync.stdout, /added adr-authoring@0\.1\.0/);
+  assert.match(sync.stdout, /added system-diagram@0\.1\.0/);
   assert.match(sync.stdout, /added implementation-guidelines@0\.1\.0/);
   assert.match(sync.stdout, /added clean-architecture-docs@0\.1\.0/);
   assert.match(sync.stdout, /added code-review@0\.1\.0/);
@@ -245,6 +263,8 @@ test('CLI defaults cache to the project .engineering directory', async () => {
   delete env.ENGINEERING_HOME;
   await execFileAsync(process.execPath, [path.join(root, 'src', 'cli.js'), '--project', tmp, 'sync'], { env });
 
+  await fs.access(path.join(tmp, '.engineering', 'cache', 'feature-design', '0.1.0', 'SKILL.md'));
+  await fs.access(path.join(tmp, '.engineering', 'cache', 'architecture-design', '0.1.0', 'SKILL.md'));
   await fs.access(path.join(tmp, '.engineering', 'cache', 'implementation-guidelines', '0.1.0', 'SKILL.md'));
   await fs.access(path.join(tmp, '.engineering', 'cache', 'clean-architecture-docs', '0.1.0', 'SKILL.md'));
   await fs.access(path.join(tmp, '.engineering', 'cache', 'code-review', '0.1.0', 'skill.yaml'));
@@ -370,6 +390,8 @@ test('doctor reports installed project-local Codex skills', async () => {
   await prepareCodex(tmp, manifest, { env, installSkills: true });
 
   const output = formatDoctor(await runDoctor(tmp, { env }));
+  assert.match(output, /Codex skill feature-design/);
+  assert.match(output, /Codex skill architecture-design/);
   assert.match(output, /Codex skill implementation-guidelines/);
   assert.match(output, /Codex skill clean-architecture-docs/);
   assert.match(output, /Codex skill code-review/);
@@ -421,6 +443,10 @@ test('usage documentation is included in the project', async () => {
   assert.match(usage, /bakeflow doctor/);
   assert.match(usage, /Use From Another Project/);
   assert.match(usage, /Codex Workflow/);
+  assert.match(usage, /feature-design/);
+  assert.match(usage, /architecture-design/);
+  assert.match(usage, /adr-authoring/);
+  assert.match(usage, /system-diagram/);
   assert.match(usage, /documentation-consistency/);
   assert.match(usage, /architecture-drift-review/);
   assert.match(usage, /spec-to-implementation-review/);
@@ -429,6 +455,10 @@ test('usage documentation is included in the project', async () => {
   assert.match(usageKo, /문서와 구현의 일치성/);
   assert.match(usageKo, /SKILLS\.ko\.md/);
   assert.match(skillsKo, /Bakeflow 기본 스킬 문서/);
+  assert.match(skillsKo, /feature-design/);
+  assert.match(skillsKo, /architecture-design/);
+  assert.match(skillsKo, /adr-authoring/);
+  assert.match(skillsKo, /system-diagram/);
   assert.match(skillsKo, /implementation-guidelines/);
   assert.match(skillsKo, /clean-architecture-docs/);
   assert.match(skillsKo, /code-review/);
@@ -437,6 +467,8 @@ test('usage documentation is included in the project', async () => {
   assert.match(skillsKo, /spec-to-implementation-review/);
   assert.match(skillsKo, /스킬 조합 예시/);
   assert.match(architecture, /현재 구현체의 이름은 `bakeflow`/);
+  assert.match(architecture, /architecture-design/);
+  assert.match(architecture, /adr-authoring/);
   assert.match(architecture, /documentation-consistency/);
   assert.match(architecture, /spec-to-implementation-review/);
   assert.equal(packageJson.name, '@bakerleebb/bakeflow');

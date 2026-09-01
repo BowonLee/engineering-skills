@@ -5,6 +5,10 @@ registry:
   path: .
 
 skills:
+  feature-design: 0.1.0
+  architecture-design: 0.1.0
+  adr-authoring: 0.1.0
+  system-diagram: 0.1.0
   implementation-guidelines: 0.1.0
   clean-architecture-docs: 0.1.0
   code-review: 0.1.0

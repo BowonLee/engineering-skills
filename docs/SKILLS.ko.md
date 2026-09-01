@@ -28,12 +28,131 @@ docs/specs            기능 스펙과 수용 기준
 
 | 스킬 | 목적 | 주로 읽는 프로젝트 문서 |
 | --- | --- | --- |
+| `feature-design` | 기능 요청과 스펙을 구현 가능한 설계 단위로 분해합니다. | `architecture`, `adr`, `design_system`, `specs` |
+| `architecture-design` | 시스템, 모듈, 기능의 아키텍처 대안과 선택안을 설계합니다. | `architecture`, `adr`, `specs` |
+| `adr-authoring` | 아키텍처 결정의 배경, 대안, 결과, 검증 기준을 ADR로 기록합니다. | `architecture`, `adr`, `specs` |
+| `system-diagram` | 아키텍처와 흐름을 Mermaid/C4 스타일 다이어그램으로 표현합니다. | `architecture`, `adr`, `specs` |
 | `implementation-guidelines` | 구현 방향, 재사용, 의존 경계, 검증 기준을 맞춥니다. | `architecture`, `adr` |
 | `clean-architecture-docs` | Clean Architecture 경계와 코드-문서 디렉토리 대응을 검증합니다. | `architecture`, `adr`, `specs` |
 | `code-review` | 변경 사항의 행동, 아키텍처, 테스트, 문서 리스크를 리뷰합니다. | `architecture`, `adr`, `design_system` |
 | `documentation-consistency` | 문서, ADR, 설계 노트, 구현이 서로 맞는지 확인합니다. | `architecture`, `adr`, `design_system`, `specs` |
 | `architecture-drift-review` | 구현이 문서화된 아키텍처와 의존 방향에서 벗어났는지 검토합니다. | `architecture`, `adr`, `design_system` |
 | `spec-to-implementation-review` | 스펙, 수용 기준, 테스트, 구현 사이의 누락을 찾습니다. | `architecture`, `adr`, `specs` |
+
+## `feature-design`
+
+기능 요청이나 스펙을 구현 가능한 설계 단위로 바꾸는 스킬입니다. 기능 경계, 사용자 흐름, 데이터/API/state 변경, 테스트, 문서 업데이트를 한 번에 정리합니다.
+
+사용 시점:
+
+- 사용자 요청이나 feature spec을 구현 작업으로 분해할 때
+- 기능 경계, module, subdomain 영향을 먼저 정리해야 할 때
+- UI, API, 데이터, 상태 변화가 같은 동작을 함께 바꿀 때
+- 구현 전에 테스트와 문서 업데이트 범위를 정해야 할 때
+
+실행 흐름:
+
+1. 생성된 컨텍스트 인덱스를 읽습니다.
+2. 원본 요청, feature spec, acceptance criteria, issue, PR 설명을 찾습니다.
+3. 목표, non-goal, 사용자-facing 동작, edge case, 호환성 제약, 성공 기준을 추출합니다.
+4. 영향을 받는 feature, module, subdomain 경계와 재사용할 기존 패턴을 찾습니다.
+5. 사용자 흐름, 데이터 흐름, API 계약, 상태 전이, 오류 처리, migration 필요 여부를 설계합니다.
+6. `architecture-design` 또는 `adr-authoring`이 필요한 아키텍처 결정을 표시합니다.
+7. 단위, 통합, e2e, visual, accessibility, migration, 운영 검증 중 필요한 테스트를 정합니다.
+8. specs, architecture, ADR, design-system, release note 업데이트를 나열합니다.
+
+피해야 할 패턴:
+
+- acceptance criteria 추출 없이 기능 요청을 바로 구현 가능한 것으로 보는 것
+- UI, API, 데이터 변경을 서로 독립적으로 설계하는 것
+- 제품 또는 아키텍처 결정을 기록하지 않고 범위를 넓히는 것
+- 문서와 테스트 없는 구현 handoff를 만드는 것
+
+## `architecture-design`
+
+현재 프로젝트 증거와 제약을 기반으로 시스템, 모듈, 기능의 아키텍처를 설계하는 스킬입니다. 단일 정답을 바로 제시하기보다 선택지와 tradeoff를 분명히 합니다.
+
+사용 시점:
+
+- 새 시스템, 모듈, 기능의 구조를 설계할 때
+- 기존 경계, 레이어, 의존 방향을 바꿀 가능성이 있을 때
+- 여러 아키텍처 대안 중 하나를 선택해야 할 때
+- 구현 전에 migration, rollout, validation 전략을 정해야 할 때
+
+실행 흐름:
+
+1. 생성된 컨텍스트 인덱스를 읽습니다.
+2. 설계 대상, 범위, non-goal, 제약, acceptance criteria를 확인합니다.
+3. 기존 architecture docs, ADR, specs, 대표 코드 경로를 읽습니다.
+4. 현재 레이어, 모듈, 소유권, 의존 방향, 데이터 흐름, 통합 지점, 저장소 경계를 매핑합니다.
+5. 중요한 결정이면 두 개 이상의 가능한 선택지를 만듭니다.
+6. 단순성, 경계 보존, 테스트 가능성, migration risk, 성능, 보안, 운영성을 기준으로 비교합니다.
+7. 권장 아키텍처와 경계, 의존 방향, 데이터/control flow, 실패 처리, rollout 방식을 설명합니다.
+8. 필요한 문서, ADR, specs, diagrams, tests, validation commands를 정리합니다.
+
+피해야 할 패턴:
+
+- 프로젝트의 현재 아키텍처를 읽기 전에 일반론으로 설계하는 것
+- 경계, 소유권, tradeoff 없이 다이어그램만 만드는 것
+- decision driver 없이 선택안을 고르는 것
+- ADR 필요 여부를 남기지 않는 것
+
+## `adr-authoring`
+
+아키텍처 결정이 일회성 설명으로 사라지지 않도록 ADR로 기록하는 스킬입니다. 결정 배경, 대안, 결과, 구현 영향, 검증 기준을 함께 남깁니다.
+
+사용 시점:
+
+- 아키텍처 경계, 의존 방향, 저장소, 통신 방식, migration 전략이 바뀔 때
+- 여러 선택지 중 하나를 선택한 이유를 기록해야 할 때
+- 구현 후 우발적 drift를 정당화하지 않고 의도된 결정으로 남겨야 할 때
+- 기존 ADR을 supersede하거나 deprecate해야 할 때
+
+실행 흐름:
+
+1. 생성된 컨텍스트 인덱스를 읽습니다.
+2. 기존 ADR 번호, status, 작성 관례를 확인합니다.
+3. 기록할 결정이 routine implementation detail이 아니라 architecture decision인지 확인합니다.
+4. context, constraints, decision drivers, alternatives, decision을 작성합니다.
+5. benefit, cost, risk, migration impact, compatibility impact, future constraint를 결과로 남깁니다.
+6. 영향을 받는 코드 경계, specs, tests, docs, rollout 작업을 연결합니다.
+7. unresolved question과 accepted assumption을 분리합니다.
+
+피해야 할 패턴:
+
+- 구현 후 accidental drift를 정당화하기 위해 ADR을 쓰는 것
+- 선택된 안만 기록하고 대안과 tradeoff를 누락하는 것
+- 독립적인 여러 결정을 하나의 ADR에 섞는 것
+- verification과 implementation impact를 빼는 것
+
+## `system-diagram`
+
+프로젝트 증거를 바탕으로 현재 또는 제안된 아키텍처를 Mermaid/C4 스타일 다이어그램으로 표현하는 스킬입니다. 설계 판단 자체보다는 구조를 읽기 쉽게 보여주는 데 집중합니다.
+
+사용 시점:
+
+- 현재 시스템 구조를 설명해야 할 때
+- 제안된 설계를 문서나 ADR에 시각적으로 연결할 때
+- 데이터 흐름, 의존 방향, 외부 시스템 연동을 명확히 해야 할 때
+- migration 전후 구조를 구분해 보여줘야 할 때
+
+실행 흐름:
+
+1. 생성된 컨텍스트 인덱스를 읽습니다.
+2. 다이어그램 목적을 정합니다. 예: current state, proposed design, migration, integration, dependency, deployment.
+3. 관련 architecture docs, ADR, specs, code path를 확인합니다.
+4. context, container, component, sequence, data flow, dependency, deployment 중 가장 작은 유용한 수준을 고릅니다.
+5. 별도 관례가 없다면 Mermaid markdown을 우선 사용합니다.
+6. boundary, ownership, external system, protocol, storage, dependency/data flow 방향을 표시합니다.
+7. current state와 proposed state를 명확히 구분합니다.
+8. 관련 문서 경로에 저장하거나 갱신하고, architecture docs 또는 ADR에서 링크합니다.
+
+피해야 할 패턴:
+
+- repo evidence 없이 추측으로 다이어그램을 그리는 것
+- 모든 시스템 세부사항을 하나의 거대한 다이어그램에 넣는 것
+- 방향, 소유권, 경계 라벨을 생략하는 것
+- current와 proposed를 구분하지 않는 것
 
 ## `implementation-guidelines`
 
@@ -220,17 +339,26 @@ packages/<name>       -> docs/packages/<name>
 새 기능 구현:
 
 ```text
-implementation-guidelines
+feature-design
+  -> architecture-design
+  -> adr-authoring
+  -> system-diagram
+  -> implementation-guidelines
   -> clean-architecture-docs
   -> spec-to-implementation-review
   -> documentation-consistency
   -> code-review
 ```
 
+작은 변경이라면 `architecture-design`, `adr-authoring`, `system-diagram`은 필요한 경우에만 사용합니다.
+
 아키텍처에 영향이 있는 변경:
 
 ```text
-implementation-guidelines
+architecture-design
+  -> adr-authoring
+  -> system-diagram
+  -> implementation-guidelines
   -> clean-architecture-docs
   -> architecture-drift-review
   -> documentation-consistency

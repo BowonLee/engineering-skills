@@ -1,0 +1,17 @@
+name: system-diagram
+version: 0.1.0
+
+description: >
+  Create or update lightweight architecture diagrams, preferably Mermaid or C4-style
+  views, from project architecture evidence, specs, ADRs, and code boundaries.
+
+tags:
+  - architecture
+  - diagram
+  - documentation
+
+project_context:
+  recommended:
+    - architecture
+    - adr
+    - specs

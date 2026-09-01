@@ -1,0 +1,19 @@
+name: feature-design
+version: 0.1.0
+
+description: >
+  Convert feature requests or specs into implementation-ready design covering
+  feature boundaries, user flows, data/API/state changes, documentation, tests,
+  and architecture decision needs.
+
+tags:
+  - feature
+  - design
+  - specification
+
+project_context:
+  recommended:
+    - architecture
+    - adr
+    - design_system
+    - specs

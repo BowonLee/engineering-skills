@@ -68,6 +68,10 @@ Claude Code 설정은 다음을 만듭니다.
 
 Bakeflow의 기본 스킬은 특정 언어나 프레임워크가 아니라 대부분의 프로젝트에서 반복되는 엔지니어링 관리 문제를 다룹니다.
 
+- `feature-design`: 기능 요청과 스펙을 구현 가능한 설계 단위로 분해합니다.
+- `architecture-design`: 시스템, 모듈, 기능의 아키텍처 대안과 선택안을 설계합니다.
+- `adr-authoring`: 아키텍처 결정의 배경, 대안, 결과, 검증 기준을 ADR로 기록합니다.
+- `system-diagram`: 아키텍처와 데이터 흐름을 Mermaid/C4 스타일 다이어그램으로 표현합니다.
 - `implementation-guidelines`: 아키텍처, ADR, 검증 기대치를 지키며 구현합니다.
 - `clean-architecture-docs`: Clean Architecture 경계와 코드-문서 디렉토리 대응을 검증합니다.
 - `code-review`: 변경 사항을 아키텍처, 문서, 테스트 증거 기준으로 리뷰합니다.

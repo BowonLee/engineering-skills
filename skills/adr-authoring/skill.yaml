@@ -1,0 +1,17 @@
+name: adr-authoring
+version: 0.1.0
+
+description: >
+  Write Architecture Decision Records that capture context, decision drivers,
+  alternatives, consequences, implementation impact, and verification criteria.
+
+tags:
+  - adr
+  - architecture
+  - documentation
+
+project_context:
+  recommended:
+    - architecture
+    - adr
+    - specs

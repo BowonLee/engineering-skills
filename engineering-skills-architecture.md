@@ -51,6 +51,10 @@ bakeflow doctor 로 검증
 현재 기본 Skill:
 
 ```text
+feature-design
+architecture-design
+adr-authoring
+system-diagram
 implementation-guidelines
 clean-architecture-docs
 code-review
@@ -59,7 +63,7 @@ architecture-drift-review
 spec-to-implementation-review
 ```
 
-이 여섯 Skill은 특정 언어/프레임워크 지식이 아니라 구현 방향, Clean Architecture 문서 대응, 리뷰, 문서 일치성, 아키텍처 drift, 스펙-구현 정합성처럼 대부분의 개발 프로젝트에서 반복되는 관리 구조를 다룬다.
+이 열 개 Skill은 특정 언어/프레임워크 지식이 아니라 기능 설계, 아키텍처 설계, 결정 기록, 다이어그램, 구현 방향, Clean Architecture 문서 대응, 리뷰, 문서 일치성, 아키텍처 drift, 스펙-구현 정합성처럼 대부분의 개발 프로젝트에서 반복되는 관리 구조를 다룬다.
 
 ---
 
@@ -191,6 +195,22 @@ engineering-skills/
 ├── README.md
 │
 ├── skills/
+│   ├── feature-design/
+│   │   ├── skill.yaml
+│   │   └── SKILL.md
+│   │
+│   ├── architecture-design/
+│   │   ├── skill.yaml
+│   │   └── SKILL.md
+│   │
+│   ├── adr-authoring/
+│   │   ├── skill.yaml
+│   │   └── SKILL.md
+│   │
+│   ├── system-diagram/
+│   │   ├── skill.yaml
+│   │   └── SKILL.md
+│   │
 │   ├── implementation-guidelines/
 │   │   ├── skill.yaml
 │   │   └── SKILL.md
@@ -357,6 +377,10 @@ registry:
   path: ./.engineering/registry
 
 skills:
+  feature-design: 0.1.0
+  architecture-design: 0.1.0
+  adr-authoring: 0.1.0
+  system-diagram: 0.1.0
   implementation-guidelines: 0.1.0
   code-review: 0.1.0
   documentation-consistency: 0.1.0
@@ -375,6 +399,10 @@ context:
 ```text
 이 프로젝트에서는
 
+feature-design
+architecture-design
+adr-authoring
+system-diagram
 implementation-guidelines
 code-review
 documentation-consistency
@@ -2879,11 +2907,19 @@ codex
 
 [x] documentation-consistency Skill 작성
 
+[x] feature-design Skill 작성
+
 [ ] feature-development Composite Skill 작성
 
 [ ] figma-to-code Skill 작성
 
+[x] architecture-design Skill 작성
+
 [x] architecture-drift-review Skill 작성
+
+[x] adr-authoring Skill 작성
+
+[x] system-diagram Skill 작성
 
 [x] implementation-guidelines Skill 작성
 
